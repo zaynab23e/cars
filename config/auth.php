@@ -79,9 +79,17 @@ return [
         ],
 
 
-        'admin' => [
+        'admins' => [
             'driver' => 'eloquent',
             'model' => env('AUTH_ADMIN_MODEL', App\Models\Admin::class),
+        ],
+        'drivers' => [
+            'driver' => 'eloquent',
+            'model' => env('AUTH_ADMIN_MODEL', App\Models\Driver::class),
+        ],
+        'sales' => [
+            'driver' => 'eloquent',
+            'model' => env('AUTH_ADMIN_MODEL', App\Models\Sale::class),
         ],
 
         // 'users' => [
