@@ -25,6 +25,7 @@ class register extends FormRequest
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:admins,email',
             'password' => 'required|string|min:6',
+            'phone' => 'nullable|string|max:12',
         
         ];
     }
