@@ -74,7 +74,7 @@ class AdminBrandsController extends Controller
         if (!$brand) {
             return response()->json([
                 'status' => 'Error has occurred...',
-                'message' => 'Brand creation failed',
+                'message' => 'Brand update failed',
                 'data' => ''
             ], 500);
         }        
