@@ -21,7 +21,7 @@ class BrandsResource extends JsonResource
                 'logo' => $this->logo
             ],
             'relationship' => [
-                'Types' => $this->types,
+                'Types' => TypesResource::collection($this->types),
             ]
         ];
     }
