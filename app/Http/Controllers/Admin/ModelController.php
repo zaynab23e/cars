@@ -3,23 +3,23 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Brand;
+use App\Models\BrandType;
 use Illuminate\Http\Request;
 use App\Models\CarModel;
 use App\Models\Type;
 
 class ModelController extends Controller
 {
-    // ____________________________________________________________
+// ____________________________________________________________
     public function index(string $brandId, string $typeId)
     {
-        $models = CarModel::whereHas('type', function ($query) use ($brandId, $typeId) {
-            $query->where('id', $typeId)->where('brand_id', $brandId);
-        })->with('type')->get();
 
+        $models = CarModel::with('type')->get();
         return response()->json($models);
     }
 
-    // ____________________________________________________________
+// ____________________________________________________________
     public function store(string $brandId, string $typeId, Request $request)
     {
         $request->validate([
@@ -27,24 +27,20 @@ class ModelController extends Controller
             'year' => 'required|integer',
             'count' => 'required|integer',
             'price' => 'required|numeric',
-            'type_id' => 'required|exists:types,id',
         ]);
-
-        $type = Type::where('id', $request->type_id)
-                    ->where('brand_id', $brandId)
-                    ->first();
-
+        $brand = Brand::findOrFail($brandId);
+        $type = $brand->types()->find($typeId);
         if (!$type) {
-            return response()->json(['message' => 'النوع لا ينتمي لهذا البراند'], 422);
+            return response()->json(['message' => 'النوع غير موجود في هذا البراند'], 404);
         }
+
 
         $model = CarModel::create([
             'name' => $request->name,
             'year' => $request->year,
             'count' => $request->count,
             'price' => $request->price,
-            'type_id' => $request->type_id,
-            'brand_id' => $type->brand_id,
+            'type_id' => $type->id,
         ]);
 
         return response()->json([
@@ -52,52 +48,73 @@ class ModelController extends Controller
             'data' => $model
         ]);
     }
+// ____________________________________________________________
+public function update(string $brandId, string $typeId, Request $request, $id)
+{
 
-    // ____________________________________________________________
-    public function update(string $brandId, string $typeId, Request $request, $id)
-    {
-        $model = CarModel::findOrFail($id);
+    $model = CarModel::findOrFail($id);
 
-        if ($model->type->brand_id != $brandId) {
-            return response()->json(['message' => 'هذا الموديل لا ينتمي لهذا البراند'], 403);
-        }
-
-        $request->validate([
-            'name' => 'sometimes|string',
-            'year' => 'sometimes|integer',
-            'count' => 'sometimes|integer',
-            'price' => 'sometimes|numeric',
-            'type_id' => 'sometimes|exists:types,id',
-        ]);
-
-        $updateData = $request->only(['name', 'year', 'count', 'price', 'type_id']);
-
-        if ($request->has('type_id')) {
-            $type = Type::where('id', $request->type_id)
-                        ->where('brand_id', $brandId)
-                        ->first();
-
-            if (!$type) {
-                return response()->json(['message' => 'النوع الجديد لا ينتمي لهذا البراند'], 422);
-            }
-
-            $updateData['brand_id'] = $type->brand_id;
-        }
-//______________________________________________________________________________
-        $model->update($updateData);
-
-        return response()->json([
-            'message' => 'تم تعديل الموديل بنجاح',
-            'data' => $model
-        ]);
+    if (!$model) {
+        return response()->json(['message' => 'هذا الموديل لا ينتمي لهذا البراند'], 403);
     }
 
+
+    $request->validate([
+        'name' => 'sometimes|string',
+        'year' => 'sometimes|integer',
+        'count' => 'sometimes|integer',
+        'price' => 'sometimes|numeric',
+        'type_id' => 'sometimes|exists:types,id',
+    ]);
+
+    $updateData = $request->only(['name', 'year', 'count', 'price', 'type_id']);
+
+    if ($request->has('type_id') && $request->type_id != $model->type_id) {
+        $newType = Type::where('id', $request->type_id)
+                    ->where('brand_id', $brandId)
+                    ->first();
+
+        if (!$newType) {
+            return response()->json(['message' => 'النوع الجديد لا ينتمي لهذا البراند'], 422);
+        }
+    }
+
+    $model->update($updateData);
+
+    return response()->json([
+        'message' => 'تم تعديل الموديل بنجاح',
+        'data' => $model
+    ]);
+}
     // ____________________________________________________________
+    public function show(string $brandId, string $typeId, $id)
+
+{
+
+    $type = Type::where('id', $typeId)
+                ->where('brand_id', $brandId)
+                ->get();
+
+    if (!$type) {
+        return response()->json(['message' => 'النوع لا يتبع هذا البراند'], 404);
+    }
+
+    $model = CarModel::findOrFail($id);
+
+    if (!$model->type->brands ) {
+        return response()->json(['message' => 'الموديل لا ينتمي لهذا النوع أو البراند'], 403);
+    }
+
+    return response()->json($model);
+}
+// ____________________________________________________________
     public function destroy(string $brandId, string $typeId, $id)
     {
-        $model = CarModel::findOrFail($id);
+            $brand = Brand::findOrFail($brandId);
+            $type = $brand->types()->findOrFail($typeId);
+            $model = CarModel::findOrFail($id);
 
-        if ($model->type->brand_id != $brandId) {
+        if (!$model->type->brands) {
             return response()->json(['message' => 'هذا الموديل لا ينتمي لهذا البراند'], 403);
         }
 
