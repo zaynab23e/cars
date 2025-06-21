@@ -27,13 +27,13 @@ class AdminBrandsController extends Controller
         // Store the Brand in the database
         $request->validate([
             'name' => 'required|string|max:255',
-            "logo" => 'required'
+            "logo" => 'required|image|max:2048'
         ]);
             if ($request->hasFile('logo')) {
             $file = $request->file('logo'); // You have an UploadedFile instance
             $filename = time() . '.' . $file->getClientOriginalExtension();
 
-            $file->storeAs('public/brands', $filename);
+            $filename = $file->store('brands', 'public');
 
             $brand = Brand::create([
                 'name' => $request->name,
@@ -43,7 +43,7 @@ class AdminBrandsController extends Controller
         if (!$brand) {
             return response()->json([
                 'status' => 'Error has occurred...',
-                'message' => 'Brand creation failed',
+                'message' => 'Brand created failed',
                 'data' => ''
             ], 500);
         }
@@ -54,17 +54,24 @@ class AdminBrandsController extends Controller
     {
         // return response($request);
         // Logic to update a Brand
+        $brand = Brand::find($id);
+        if (!$brand) {
+            return response()->json([
+                'status' => 'Error has occurred...',
+                'message' => 'There is no Brand with this id',
+                'data' => ''
+            ], 500);
+        }        
         $request->validate([
             'name' => 'required|string|max:255',
-            "logo" => 'required'
+            "logo" => 'required|image|max:2048'
         ]);        
         // Find the Brand and update it
-        $brand = Brand::findOrFail($id);
             if ($request->hasFile('logo')) {
             $file = $request->file('logo'); // You have an UploadedFile instance
             $filename = time() . '.' . $file->getClientOriginalExtension();
 
-            $file->storeAs('public/brands', $filename);
+            $filename = $file->store('brands', 'public');
 
             $brand->update([
                 'name' => $request->name,
@@ -74,7 +81,7 @@ class AdminBrandsController extends Controller
         if (!$brand) {
             return response()->json([
                 'status' => 'Error has occurred...',
-                'message' => 'Brand update failed',
+                'message' => 'Brand updated failed',
                 'data' => ''
             ], 500);
         }        
@@ -88,7 +95,15 @@ class AdminBrandsController extends Controller
     public function destroy($id)
     {
         // Logic to delete a Brand
-        $brand = Brand::findOrFail($id);
+        $brand = Brand::find($id);
+        if (!$brand) {
+            return response()->json([
+                'status' => 'Error has occurred...',
+                'message' => 'There is no Brand with this id',
+                'data' => ''
+            ], 500);
+        }
+                  
         $brand->delete();
 
         return $this->success('','Brand deleted successfully.');
@@ -96,8 +111,14 @@ class AdminBrandsController extends Controller
     public function show($id)
     {
         // Logic to display a single Brand
-        $brand = Brand::findOrFail($id);
-        $admin = Auth::guard('admin')->user();
+        $brand = Brand::find($id);
+        if (!$brand) {
+            return response()->json([
+                'status' => 'Error has occurred...',
+                'message' => 'There is no Brand with this id',
+                'data' => ''
+            ], 500);
+        }  
         return new BrandsResource($brand);
     }
 

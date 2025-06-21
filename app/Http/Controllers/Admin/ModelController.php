@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Brand;
 use App\Models\BrandType;
+use App\Models\Car;
 use Illuminate\Http\Request;
 use App\Models\CarModel;
 use App\Models\Type;
@@ -25,7 +26,6 @@ class ModelController extends Controller
         $request->validate([
             'name' => 'required|string',
             'year' => 'required|integer',
-            'count' => 'required|integer',
             'price' => 'required|numeric',
         ]);
         $brand = Brand::findOrFail($brandId);
@@ -38,7 +38,6 @@ class ModelController extends Controller
         $model = CarModel::create([
             'name' => $request->name,
             'year' => $request->year,
-            'count' => $request->count,
             'price' => $request->price,
             'type_id' => $type->id,
         ]);
@@ -91,9 +90,7 @@ public function update(string $brandId, string $typeId, Request $request, $id)
 
 {
 
-    $type = Type::where('id', $typeId)
-                ->where('brand_id', $brandId)
-                ->get();
+    $type = Type::where('id', $typeId)->get();
 
     if (!$type) {
         return response()->json(['message' => 'النوع لا يتبع هذا البراند'], 404);

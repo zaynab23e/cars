@@ -49,6 +49,9 @@ if (!$model) {
         'color' => $request->color,
         'image' => $imagePath,
     ]);
+        $carsCount = Car::where('carmodel_id',$modelId)->count();
+        $model->count = $carsCount ;
+        $model->save();    
 
     return response()->json([
         'message' => 'تم إضافة السيارة بنجاح',
@@ -98,6 +101,12 @@ if (!$model) {
         }
 
         $car->delete();
+        $model = CarModel::where('id', $modelId)
+                ->where('type_id', $typeId)
+                ->firstOrFail();        
+        $carsCount = Car::where('carmodel_id',$modelId)->count();
+        $model->count = $carsCount ;
+        $model->save();         
         return response()->json(['message' => 'Car deleted successfully']);
     }
 }
