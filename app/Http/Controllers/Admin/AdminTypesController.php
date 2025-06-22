@@ -33,12 +33,13 @@ class AdminTypesController extends Controller
         ]);
         $type = Type::create([
             'name' => $request->name,
-            'description' => $request->description
-        ]);
-        BrandType::create([
+            'description' => $request->description,
             'brand_id' => $brand->id,
-            'type_id' => $type->id,
+
         ]);
+        // BrandType::create([
+        //     'type_id' => $type->id,
+        // ]);
         $type =  new TypesResource($type);
         if (!$type) {
             return response()->json([

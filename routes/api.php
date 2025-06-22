@@ -9,14 +9,15 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\ModelController;
 use App\Http\Controllers\Admin\BookingController;
 use App\Http\Controllers\Admin\CarController;
+use App\Http\Controllers\User\HomePageController;
 
-
-Route::middleware('lang')->prefix('/admin')->group(function () {
-
+Route::middleware('lang')->group(function () {
+///////////////////////////////Admin Routes////////////////////////////////////
+Route::prefix('/admin')->group(function () {
     Route::post('/register', [AdminsAuthController::class, 'register'])->name('admins.register');
     Route::post('/login', [AdminsAuthController::class, 'login'])->name('admins.login');
-
-Route::middleware('admin')->group(function () {
+});
+Route::middleware('admin')->prefix('/admin')->group(function () {
     Route::post('/logout', [AdminsAuthController::class, 'logout'])->name('admins.logout');
     //Brands
     Route::get('/Brands',[AdminBrandsController::class,'index']);   
@@ -32,11 +33,11 @@ Route::middleware('admin')->group(function () {
     Route::delete('/Brands/{brand}/Types/{id}',[AdminTypesController::class,'destroy']);  
     
     // Models CRUD (nested in brand & type)
-        Route::get('/Brands/{brandId}/Types/{typeId}/Models', [ModelController::class, 'index']);
-        Route::post('/Brands/{brandId}/Types/{typeId}/Models', [ModelController::class, 'store']);
-        Route::post('/Brands/{brandId}/Types/{typeId}/Models/{id}', [ModelController::class, 'update']);
-        Route::delete('/Brands/{brandId}/Types/{typeId}/Models/{id}', [ModelController::class, 'destroy']);
-        Route::get('/Brands/{brandId}/Types/{typeId}/Models/{id}', [ModelController::class, 'show']);
+    Route::get('/Brands/{brandId}/Types/{typeId}/Models', [ModelController::class, 'index']);
+    Route::post('/Brands/{brandId}/Types/{typeId}/Models', [ModelController::class, 'store']);
+    Route::post('/Brands/{brandId}/Types/{typeId}/Models/{id}', [ModelController::class, 'update']);
+    Route::delete('/Brands/{brandId}/Types/{typeId}/Models/{id}', [ModelController::class, 'destroy']);
+    Route::get('/Brands/{brandId}/Types/{typeId}/Models/{id}', [ModelController::class, 'show']);
 
     //Booking
     Route::get('/Booking', [BookingController::class, 'index']); 
@@ -47,15 +48,22 @@ Route::middleware('admin')->group(function () {
 
     Route::post('/Booking/{id}/assign-driver', [BookingController::class, 'assignDriver']);
     Route::post('/Booking/{id}/change-status', [BookingController::class, 'changeStatus']);
-//car
+    //car
     Route::get('Brands/{brandId}/Types/{typeId}/Models/{modelId}/Cars', [CarController::class, 'index']);
     Route::post('Brands/{brandId}/Types/{typeId}/Models/{modelId}/Cars', [CarController::class, 'store']);
     Route::get('Brands/{brandId}/Types/{typeId}/Models/{modelId}/Cars/{car}', [CarController::class, 'show']);
     Route::post('Brands/{brandId}/Types/{typeId}/Models/{modelId}/Cars/{car}', [CarController::class, 'update']); 
     Route::delete('Brands/{brandId}/Types/{typeId}/Models/{modelId}/Cars/{car}', [CarController::class, 'destroy']);
+});
+///////////////////////////////User Routes////////////////////////////////////
+Route::prefix('/user')->group(function () {
+    Route::post('/register', [AuthController::class, 'register'])->name('users.register');
+    Route::post('/login', [AuthController::class, 'login'])->name('users.login');
+
+    Route::get('/Home', [HomePageController::class, 'index']);
+    Route::get('/Brands/{id}', [HomePageController::class, 'show']);
 
 });
-
 });
 
 //    Route::get('/Brands/{brandId}/Types/{typeId}/Models/{modelId}/Car', [ModelController::class, 'index']);

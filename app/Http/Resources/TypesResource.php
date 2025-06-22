@@ -18,10 +18,11 @@ class TypesResource extends JsonResource
             'id' => (string)$this->id,
             'attributes' =>[
                 'name' =>$this->name,
-                'description'=>$this->description
+                'description'=>$this->description,
+                'brand_id' => (string)$this->brand_id,
             ],
             'relationship' => [
-                'Brands' => $this->Brands,
+                'Brands' => $this->brand,
                 'Models' => $this->carModels,
             ]
         ];
