@@ -23,22 +23,32 @@ class ModelController extends Controller
 // ____________________________________________________________
     public function store(string $brandId, string $typeId, Request $request)
     {
+        // return response()->json([$request->all()]);
         $request->validate([
             'name' => 'required|string',
             'year' => 'required|integer',
             'price' => 'required|numeric',
+            'image' => 'required|image|max:2048'
+
         ]);
-        $brand = Brand::findOrFail($brandId);
+        $brand = Brand::find($brandId);
+        if (!$brand) {
+            return response()->json(['message' => 'البراند غير موجود'], 404);
+        } 
         $type = $brand->types()->find($typeId);
         if (!$type) {
             return response()->json(['message' => 'النوع غير موجود في هذا البراند'], 404);
         }
 
+        $file = $request->file('image'); // You have an UploadedFile instance
+        $filename = time() . '.' . $file->getClientOriginalExtension();
 
+        $filename = $file->store('models', 'public');
         $model = CarModel::create([
             'name' => $request->name,
             'year' => $request->year,
             'price' => $request->price,
+            'image' => $filename,
             'type_id' => $type->id,
         ]);
 
@@ -49,42 +59,42 @@ class ModelController extends Controller
     }
 // ____________________________________________________________
 public function update(string $brandId, string $typeId, Request $request, $id)
-{
-
-    $model = CarModel::findOrFail($id);
-
-    if (!$model) {
-        return response()->json(['message' => 'هذا الموديل لا ينتمي لهذا البراند'], 403);
-    }
-
-
-    $request->validate([
-        'name' => 'sometimes|string',
-        'year' => 'sometimes|integer',
-        'count' => 'sometimes|integer',
-        'price' => 'sometimes|numeric',
-        'type_id' => 'sometimes|exists:types,id',
-    ]);
-
-    $updateData = $request->only(['name', 'year', 'count', 'price', 'type_id']);
-
-    if ($request->has('type_id') && $request->type_id != $model->type_id) {
-        $newType = Type::where('id', $request->type_id)
-                    ->where('brand_id', $brandId)
-                    ->first();
-
-        if (!$newType) {
-            return response()->json(['message' => 'النوع الجديد لا ينتمي لهذا البراند'], 422);
+    {
+        $request->validate([
+            'name' => 'required|string',
+            'year' => 'required|integer',
+            'price' => 'required|numeric',
+            'image' => 'required|image|max:2048'
+        ]);
+        $brand = Brand::find($brandId);
+        if (!$brand) {
+            return response()->json(['message' => 'البراند غير موجود'], 404);
         }
+        $type = $brand->types()->find($typeId);
+        if (!$type) {
+            return response()->json(['message' => 'النوع غير موجود في هذا البراند'], 404);
+        }
+        $model = $type->models()->find($id);
+        if (!$model) {
+            return response()->json(['message' => 'الموديل غير موجود في هذا البراند'], 404);
+        }        
+
+        $file = $request->file('image'); // You have an UploadedFile instance
+        $filename = time() . '.' . $file->getClientOriginalExtension();
+
+        $filename = $file->store('models', 'public');
+        $model::update([
+            'name' => $request->name,
+            'year' => $request->year,
+            'price' => $request->price,
+            'image' => $filename,
+        ]);
+
+        return response()->json([
+            'message' => 'تم إضافة الموديل بنجاح',
+            'data' => $model
+        ]);
     }
-
-    $model->update($updateData);
-
-    return response()->json([
-        'message' => 'تم تعديل الموديل بنجاح',
-        'data' => $model
-    ]);
-}
     // ____________________________________________________________
     public function show(string $brandId, string $typeId, $id)
 
