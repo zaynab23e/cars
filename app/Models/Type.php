@@ -6,11 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Type extends Model
 {
-    protected $fillable = ['name','description'];
+    protected $fillable = ['name','description','brand_id'];
+    protected $hidden = ['created_at', 'updated_at'];
+
     
-    public function brands() 
+    public function brand() 
     {
-        return $this->belongsToMany(Brand::class,'brand_types','type_id','brand_id');
+        return $this->belongsTo(Brand::class);
 
     }
     public function carModels() 

@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Brand;
-use App\Models\BrandType;
 use App\Models\Car;
 use Illuminate\Http\Request;
 use App\Models\CarModel;
@@ -15,8 +14,16 @@ class ModelController extends Controller
 // ____________________________________________________________
     public function index(string $brandId, string $typeId)
     {
+        $brand = Brand::find($brandId);
+        if (!$brand) {
+            return response()->json(['message' => 'البراند غير موجود'], 404);
+        }   
+        $type = $brand->types()->find($typeId);
+        if (!$type) {
+            return response()->json(['message' => 'النوع غير موجود في هذا البراند'], 404);
+        }
 
-        $models = CarModel::with('type')->get();
+        $models = $type->carModels()->with('type.brand')->get(['id', 'name', 'year', 'price', 'image', 'type_id']);
         return response()->json($models);
     }
 
@@ -108,7 +115,7 @@ public function update(string $brandId, string $typeId, Request $request, $id)
 
     $model = CarModel::findOrFail($id);
 
-    if (!$model->type->brands ) {
+    if (!$model->type->brand ) {
         return response()->json(['message' => 'الموديل لا ينتمي لهذا النوع أو البراند'], 403);
     }
 
@@ -121,7 +128,7 @@ public function update(string $brandId, string $typeId, Request $request, $id)
             $type = $brand->types()->findOrFail($typeId);
             $model = CarModel::findOrFail($id);
 
-        if (!$model->type->brands) {
+        if (!$model->type->brand) {
             return response()->json(['message' => 'هذا الموديل لا ينتمي لهذا البراند'], 403);
         }
 

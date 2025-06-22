@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class Brand extends Model
 {
   protected $fillable = ['name','logo'];
+  protected $hidden = ['created_at', 'updated_at'];
 
   public function types() 
   {
-    return $this->belongsToMany(Type::class,'brand_types','brand_id','type_id');
+    return $this->hasMany(Type::class);
 
   }
 
