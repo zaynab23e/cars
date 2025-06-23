@@ -25,8 +25,7 @@ class bokingStore extends FormRequest
             'driver_id' => 'nullable|exists:drivers,id',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
-            'final_price' => 'required|numeric',
-            'status' => 'required|in:pending,confirmed,assigned,canceled,completed',
+            'status' => 'nullable|in:pending,confirmed,assigned,canceled,completed',
         ];
     }
 }

@@ -4,11 +4,13 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\bokingStore;
+use App\Http\Resources\BrandsResource;
 use App\Http\Resources\ModelResource;
 use App\Models\Booking;
 use App\Models\Brand;
 use App\Models\CarModel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HomePageController extends Controller
 {
@@ -47,13 +49,34 @@ class HomePageController extends Controller
     }
 
 
-    public function store(bokingStore $request)
+    public function carBooking(string $id, bokingStore $request)
     {
-        $user = auth()->user();
+        // return response()->json($request->all());
+        $model = CarModel::find($id);
+        if (!$model) {
+            return response()->json(['message' => 'الموديل غير موجود'], 404);
+        }
+        $price = $model->price;
+        $days = ((strtotime($request->end_date) - strtotime($request->start_date)) / (60 * 60 * 24)) + 1;
+        $finalPrice = $price * $days;
+        $user = Auth::guard('user')->user();
+        if (!$user) {
+            return response()->json(['message' => 'المستخدم غير مصرح له'], 403);
+        }
         $validated = $request->validated();
-
-        $booking = Booking::create($validated);
-
-        return response()->json(['message' => 'تم إنشاء الحجز بنجاح', 'data' => $booking], 201);
+        $booking = Booking::create([
+            'start_date' => $validated['start_date'],
+            'end_date' => $validated['end_date'],
+            'final_price' => $finalPrice,
+            'user_id' => $user->id,
+        ]);
+        return response()->json(['message' => 'تم إنشاء الحجز بنجاح',
+         'data' =>[
+            'booking' => $booking,
+            'car_model' => new ModelResource($model),
+            'user' => $user,
+         ] 
+        
+        ], 201);
     }
 }
