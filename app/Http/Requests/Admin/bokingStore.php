@@ -22,8 +22,6 @@ class bokingStore extends FormRequest
     public function rules(): array
     {
         return [
-            'car_id' => 'required|exists:cars,id',
-            'user_id' => 'required|exists:users,id',
             'driver_id' => 'nullable|exists:drivers,id',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
