@@ -24,7 +24,13 @@ class AuthController extends Controller
 
         $user = User::create( $validatedData);
 
-        return response()->json(['message'=>'تم التسجيل بنجاح'], 201);
+        $token = $user->createToken('api-token')->plainTextToken;
+
+        return response()->json([
+            'message'=> 'تم إنشاء الحساب بنجاح',
+            'user'=>$user,
+            'token' => $token,
+        ]);
     }
 
 // _______________________________________________________________________________________________________________
@@ -132,7 +138,6 @@ public function resetPassword(Request $request)
         'password' => Hash::make($request->password)
     ]);
 
-    // حذف الرمز بعد الاستخدام
     DB::table('password_reset_tokens')->where('email', $request->email)->delete();
 
     return response()->json(['message' => 'تمت إعادة تعيين كلمة المرور بنجاح']);

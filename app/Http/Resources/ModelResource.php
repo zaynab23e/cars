@@ -33,7 +33,7 @@ class ModelResource extends JsonResource
                     'brand_id' => $this->type->brand->id,
                     'brand_name' => $this->type->brand->name,],
 
-            ]
+            ] 
         ];
     
     }

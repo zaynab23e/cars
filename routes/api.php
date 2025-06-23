@@ -55,29 +55,25 @@ Route::middleware('admin')->prefix('/admin')->group(function () {
     Route::get('Brands/{brandId}/Types/{typeId}/Models/{modelId}/Cars/{car}', [CarController::class, 'show']);
     Route::post('Brands/{brandId}/Types/{typeId}/Models/{modelId}/Cars/{car}', [CarController::class, 'update']); 
     Route::delete('Brands/{brandId}/Types/{typeId}/Models/{modelId}/Cars/{car}', [CarController::class, 'destroy']);
-
+    
     //    Route::get('/Brands/{brandId}/Types/{typeId}/Models/{modelId}/Car', [ModelController::class, 'index']);
-
+    
 });
-//user routes
+// user routes
+
+
 Route::prefix('/user')->group(function () {
     Route::post('register', [UserAuthController::class, 'register']);
-    Route::post('login', [UserAuthController::class, 'login']);
-    Route::post('logout', [UserAuthController::class, 'logout'])->middleware('auth:sanctum');
-
-    Route::post('forgot-password', [UserAuthController::class, 'forgotPassword']);
+Route::post('login', [UserAuthController::class, 'login']);
+Route::post('forgot-password', [UserAuthController::class, 'forgotPassword']);
     Route::post('verify-code', [UserAuthController::class, 'verifyCode']);
     Route::post('reset-password', [UserAuthController::class, 'resetPassword']);
-
+    Route::post('logout', [UserAuthController::class, 'logout'])->middleware('auth:sanctum');
+    Route::get('/related', [CarController::class, 'related']);
+        Route::post('/Home', [HomePageController::class, 'index']);
+    Route::get('Brands/{brandId}/Types/{typeId}/Models/{modelId}/Cars/{car}', [CarController::class, 'show']);
 });
-///////////////////////////////User Routes////////////////////////////////////
-Route::prefix('/user')->group(function () {
-    Route::post('/register', [AuthController::class, 'register'])->name('users.register');
-    Route::post('/login', [AuthController::class, 'login'])->name('users.login');
 
-    Route::post('/Home', [HomePageController::class, 'index']);
-
-});
 
 });
 

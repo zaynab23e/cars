@@ -88,15 +88,18 @@ public function show($id)
             'status' => $car->status,
             'color' => $car->color,
             'main_image' => $car->image ? asset('storage/' . $car->image) : null,
-            'images' => $car->images->map(function ($img) {
-                return asset('storage/' . $img->path);
-            }),
-            'model' => new ModelResource($car->carModel),
+            'images' => $car->images->map(fn($img) => asset('storage/' . $img->path)),
+            'car_model' => $car->carModel ? new ModelResource($car->carModel) : null,
             'created_at' => $car->created_at,
         ]
     ]);
 }
-
+//________________________________________________________________________________________________________
+public function related()
+{
+    $cars = CarModel::inRandomOrder()->take(3)->get();
+    return response()->json($cars);
+}
 // __________________________________________________________________________________________
 public function update(Request $request, $brandId, $typeId, $modelId, Car $car)
 {
@@ -116,7 +119,7 @@ public function update(Request $request, $brandId, $typeId, $modelId, Car $car)
         $car->image = $request->file('image')->store('cars', 'public');
     }
 
- 
+
     $car->update([
         'plate_number' => $request->plate_number ?? $car->plate_number,
         'status' => $request->status ?? $car->status,
