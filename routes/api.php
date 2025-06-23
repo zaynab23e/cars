@@ -55,7 +55,7 @@ Route::middleware('admin')->prefix('/admin')->group(function () {
     Route::get('Brands/{brandId}/Types/{typeId}/Models/{modelId}/Cars/{car}', [CarController::class, 'show']);
     Route::post('Brands/{brandId}/Types/{typeId}/Models/{modelId}/Cars/{car}', [CarController::class, 'update']); 
     Route::delete('Brands/{brandId}/Types/{typeId}/Models/{modelId}/Cars/{car}', [CarController::class, 'destroy']);
-<<<<<<< HEAD
+
     //    Route::get('/Brands/{brandId}/Types/{typeId}/Models/{modelId}/Car', [ModelController::class, 'index']);
 
 });
@@ -68,7 +68,7 @@ Route::prefix('/user')->group(function () {
     Route::post('forgot-password', [UserAuthController::class, 'forgotPassword']);
     Route::post('verify-code', [UserAuthController::class, 'verifyCode']);
     Route::post('reset-password', [UserAuthController::class, 'resetPassword']);
-=======
+
 });
 ///////////////////////////////User Routes////////////////////////////////////
 Route::prefix('/user')->group(function () {
@@ -79,7 +79,6 @@ Route::prefix('/user')->group(function () {
     Route::get('/Brands/{id}', [HomePageController::class, 'show']);
 
 });
->>>>>>> cbd5d5bfeb8f5363a827901c53cecb4d6231d337
-});
 
 });
+

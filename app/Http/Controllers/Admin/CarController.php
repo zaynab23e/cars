@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Car;
 use App\Models\CarModel;
+use App\Models\Image;
 
 class CarController extends Controller
 {
@@ -19,28 +20,28 @@ class CarController extends Controller
     //_____________________________________________________________________________________________
 public function store(Request $request, $brandId, $typeId, $modelId)
 {
-
     $model = CarModel::where('id', $modelId)
-            ->where('type_id', $typeId)
-            ->firstOrFail();
+        ->where('type_id', $typeId)
+        ->firstOrFail();
 
-if (!$model) {
-    return response()->json(['message' => 'الموديل غير موجود أو غير مرتبط بنوع/براند صالح'], 404);
-}
+    if (!$model) {
+        return response()->json(['message' => 'الموديل غير موجود أو غير مرتبط بنوع/براند صالح'], 404);
+    }
 
     $request->validate([
         'plate_number' => 'required|string|unique:cars',
         'status' => 'required|string',
         'color' => 'nullable|string',
         'image' => 'nullable|image|max:2048',
+        'images' => 'nullable|array',
+        'images.*' => 'image|max:2048', // صور متعددة
     ]);
-
-
 
     $imagePath = null;
     if ($request->hasFile('image')) {
         $imagePath = $request->file('image')->store('cars', 'public');
     }
+
 
     $car = Car::create([
         'carmodel_id' => $modelId,
@@ -49,16 +50,29 @@ if (!$model) {
         'color' => $request->color,
         'image' => $imagePath,
     ]);
-        $carsCount = Car::where('carmodel_id',$modelId)->count();
-        $model->count = $carsCount ;
-        $model->save();    
+
+
+    $carsCount = Car::where('carmodel_id', $modelId)->count();
+    $model->count = $carsCount;
+    $model->save();
+
+
+    if ($request->hasFile('images')) {
+        foreach ($request->file('images') as $file) {
+            $path = $file->store('cars', 'public');
+
+            Image::create([
+                'car_id' => $car->id,
+                'path' => $path,
+            ]);
+        }
+    }
 
     return response()->json([
-        'message' => 'تم إضافة السيارة بنجاح',
-        'data' => $car
+        'message' => 'تم إضافة السيارة والصور بنجاح',
+        'data' => $car->load('images'), 
     ], 201);
 }
-
 
     // _________________________________________________________________________________________
     public function show($brandId, $typeId, $modelId, Car $car)
