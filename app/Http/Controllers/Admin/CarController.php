@@ -82,7 +82,7 @@ public function show($id)
     $car = Car::with(['images', 'carModel.type.brand'])->findOrFail($id);
 
     return response()->json([
-        'data' => [
+        'message' => [
             'id' => $car->id,
             'plate_number' => $car->plate_number,
             'status' => $car->status,
@@ -98,27 +98,43 @@ public function show($id)
 }
 
 // __________________________________________________________________________________________
-    public function update(Request $request, $brandId, $typeId, $modelId, Car $car)
-    {
-        if ($car->carmodel_id != $modelId) {
-            return response()->json(['message' => 'Car does not belong to this model'], 404);
-        }
-
-        $request->validate([
-            'plate_number' => 'sometimes|string|unique:cars,plate_number,' . $car->id,
-            'status' => 'sometimes|string',
-            'color' => 'nullable|string',
-            'image' => 'nullable|image|max:2048',
-        ]);
-
-        if ($request->hasFile('image')) {
-            $car->image = $request->file('image')->store('cars', 'public');
-        }
-
-        $car->update($request->only(['plate_number', 'status', 'color', 'image']));
-
-        return response()->json($car);
+public function update(Request $request, $brandId, $typeId, $modelId, Car $car)
+{
+    if ($car->carmodel_id != $modelId) {
+        return response()->json(['message' => 'السيارة لا تنتمي لهذا الموديل'], 404);
     }
+
+    $request->validate([
+        'plate_number' => 'sometimes|string|unique:cars,plate_number,' . $car->id,
+        'status' => 'sometimes|string',
+        'color' => 'nullable|string',
+        'image' => 'nullable|image|max:2048',
+    ]);
+
+    
+    if ($request->hasFile('image')) {
+        $car->image = $request->file('image')->store('cars', 'public');
+    }
+
+ 
+    $car->update([
+        'plate_number' => $request->plate_number ?? $car->plate_number,
+        'status' => $request->status ?? $car->status,
+        'color' => $request->color ?? $car->color,
+        'image' => $car->image, 
+    ]);
+
+    return response()->json([
+        'message' => 'تم تحديث السيارة بنجاح',
+        'data' => [
+            'id' => $car->id,
+            'plate_number' => $car->plate_number,
+            'status' => $car->status,
+            'color' => $car->color,
+            'main_image' => $car->image ? asset('storage/' . $car->image) : null,
+        ]
+    ]);
+}
 
     //____________________________________________________________________________________________
     public function destroy($brandId, $typeId, $modelId, Car $car)
