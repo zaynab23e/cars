@@ -60,8 +60,7 @@ Route::prefix('/user')->group(function () {
     Route::post('/register', [AuthController::class, 'register'])->name('users.register');
     Route::post('/login', [AuthController::class, 'login'])->name('users.login');
 
-    Route::get('/Home', [HomePageController::class, 'index']);
-    Route::get('/Brands/{id}', [HomePageController::class, 'show']);
+    Route::post('/Home', [HomePageController::class, 'index']);
 
 });
 });
