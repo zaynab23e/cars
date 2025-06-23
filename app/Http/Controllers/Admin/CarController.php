@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Car;
 use App\Models\CarModel;
 use App\Models\Image;
+use App\Http\Resources\ModelResource;
 
 class CarController extends Controller
 {
@@ -75,16 +76,28 @@ public function store(Request $request, $brandId, $typeId, $modelId)
 }
 
     // _________________________________________________________________________________________
-    public function show($brandId, $typeId, $modelId, Car $car)
-    {
-        if ($car->carmodel_id != $modelId) {
-            return response()->json(['message' => 'Car does not belong to this model'], 404);
-        }
 
-        return response()->json($car);
-    }
+public function show($id)
+{
+    $car = Car::with(['images', 'carModel.type.brand'])->findOrFail($id);
 
-    // __________________________________________________________________________________________
+    return response()->json([
+        'data' => [
+            'id' => $car->id,
+            'plate_number' => $car->plate_number,
+            'status' => $car->status,
+            'color' => $car->color,
+            'main_image' => $car->image ? asset('storage/' . $car->image) : null,
+            'images' => $car->images->map(function ($img) {
+                return asset('storage/' . $img->path);
+            }),
+            'model' => new ModelResource($car->carModel),
+            'created_at' => $car->created_at,
+        ]
+    ]);
+}
+
+// __________________________________________________________________________________________
     public function update(Request $request, $brandId, $typeId, $modelId, Car $car)
     {
         if ($car->carmodel_id != $modelId) {
