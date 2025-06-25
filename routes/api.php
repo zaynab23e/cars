@@ -73,14 +73,20 @@ Route::prefix('/user')->group(function () {
 });
 ///////////////////////////////User Routes////////////////////////////////////
 Route::middleware('user')->prefix('/user')->group(function () {
-    Route::post('/user-location', [HomePageController::class, 'userLocation']);
-    Route::post('/Model/{id}/car-booking', [HomePageController::class, 'carBooking']);
-    Route::post('/Model/{modelId}/car-booking/{id}/payment-method', [HomePageController::class, 'setPaymentMethod']);
-    Route::post('/Model/{modelId}/car-booking/{id}/paymob-info', [HomePageController::class, 'setPaymobInfo']);
-    Route::post('/Model/{modelId}/car-status/{id}', [HomePageController::class, 'setOrderStatus']);
+    Route::post('/user-location', [BookingController::class, 'userLocation']);
+    Route::post('/Model/{id}/car-booking', [BookingController::class, 'carBooking']);
+    Route::post('/Model/{modelId}/car-booking/{id}/payment-method', [BookingController::class, 'setPaymentMethod']);
+    Route::post('/Model/{modelId}/car-booking/{id}/paymob-info', [BookingController::class, 'setPaymobInfo']);
     Route::post('/update-profile', [ProfileController::class, 'updateUserProfile']);    
     Route::get('/booking-list', [ProfileController::class, 'bookingList']);
-    
+
+/////////////////////////Sales////////////////////////
+    Route::post('/Model/{modelId}/car-status/{id}', [HomePageController::class, 'setOrderStatus']);
+/////////////////////////////////////////////////////
+
+
+
+
     Route::post('logout', [UserAuthController::class, 'logout']);
 });
 
