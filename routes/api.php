@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\ModelController;
 use App\Http\Controllers\Admin\BookingController;
 use App\Http\Controllers\Admin\CarController;
 use App\Http\Controllers\User\HomePageController;
+use App\Http\Controllers\User\ProfileController;
 
 Route::middleware('lang')->group(function () {
 ///////////////////////////////Admin Routes////////////////////////////////////
@@ -67,12 +68,18 @@ Route::prefix('/user')->group(function () {
     Route::post('forgot-password', [UserAuthController::class, 'forgotPassword']);
     Route::post('verify-code', [UserAuthController::class, 'verifyCode']);
     Route::post('reset-password', [UserAuthController::class, 'resetPassword']);
+    Route::post('/Home', [HomePageController::class, 'index']);
     
 });
 ///////////////////////////////User Routes////////////////////////////////////
 Route::middleware('user')->prefix('/user')->group(function () {
-    Route::post('/Home', [HomePageController::class, 'index']);
+    Route::post('/user-location', [HomePageController::class, 'userLocation']);
     Route::post('/Model/{id}/car-booking', [HomePageController::class, 'carBooking']);
+    Route::post('/Model/{modelId}/car-booking/{id}/payment-method', [HomePageController::class, 'setPaymentMethod']);
+    Route::post('/Model/{modelId}/car-booking/{id}/paymob-info', [HomePageController::class, 'setPaymobInfo']);
+    Route::post('/Model/{modelId}/car-status/{id}', [HomePageController::class, 'setOrderStatus']);
+    Route::post('/update-profile', [ProfileController::class, 'updateUserProfile']);    
+    Route::get('/booking-list', [ProfileController::class, 'bookingList']);
     
     Route::post('logout', [UserAuthController::class, 'logout']);
 });

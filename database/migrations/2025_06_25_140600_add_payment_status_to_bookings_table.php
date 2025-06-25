@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('address');
-            $table->string('image')->nullable();
-            $table->string('last_name');
+        Schema::table('bookings', function (Blueprint $table) {
+            $table->enum('payment_status', ['Successful','Pending','Declined'])->default('Pending')->after('payment_method');
+            
         });
-        
     }
 
     /**
@@ -24,8 +22,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            //
+        Schema::table('bookings', function (Blueprint $table) {
+            $table->dropColumn('payment_status');
         });
     }
 };

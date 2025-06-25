@@ -21,18 +21,17 @@ class ModelResource extends JsonResource
                 'year' =>$this->year,
                 'price' =>$this->price,
                 'image' =>$this->image,
-                'type_id' => (string)$this->type_id,
             ],
             'relationship' => [
                 'Types' => [
                     'type_id' => (string)$this->type->id,
                     'type_name' => $this->type->name,
-                    // 'brand_id' => $this->type->brands,
                 ],
                 'Brand' => [
                     'brand_id' => $this->type->brand->id,
-                    'brand_name' => $this->type->brand->name,],
-
+                    'brand_name' => $this->type->brand->name,
+                    // 'brand_image' => $this->type->brand->logo,                
+                ],
             ]
         ];
     
