@@ -64,6 +64,7 @@ Route::middleware('admin')->prefix('/admin')->group(function () {
 
 Route::prefix('/user')->group(function () {
     Route::post('register', [UserAuthController::class, 'register']);
+
 Route::post('login', [UserAuthController::class, 'login']);
 Route::post('forgot-password', [UserAuthController::class, 'forgotPassword']);
     Route::post('verify-code', [UserAuthController::class, 'verifyCode']);
@@ -75,5 +76,19 @@ Route::post('forgot-password', [UserAuthController::class, 'forgotPassword']);
 });
 
 
+    Route::post('login', [UserAuthController::class, 'login']);
+    
+    Route::post('forgot-password', [UserAuthController::class, 'forgotPassword']);
+    Route::post('verify-code', [UserAuthController::class, 'verifyCode']);
+    Route::post('reset-password', [UserAuthController::class, 'resetPassword']);
+    
 });
+///////////////////////////////User Routes////////////////////////////////////
+Route::middleware('user')->prefix('/user')->group(function () {
+    Route::post('/Home', [HomePageController::class, 'index']);
+    Route::post('/Model/{id}/car-booking', [HomePageController::class, 'carBooking']);
+    
+    Route::post('logout', [UserAuthController::class, 'logout']);
+});
+
 

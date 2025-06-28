@@ -4,11 +4,11 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use App\Http\Middleware\Admin;
-
-use App\Http\Middleware\SetAppLang;
-
 use App\Http\Middleware\Sales;
 use App\Http\Middleware\Driver;
+use App\Http\Middleware\User;
+
+use App\Http\Middleware\SetAppLang;
 
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -21,6 +21,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'admin' =>  Admin::class,
+            'user' =>  User::class,
 
             'lang' =>  SetAppLang::class,
 
