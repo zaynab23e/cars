@@ -69,6 +69,7 @@ Route::prefix('/user')->group(function () {
     Route::post('verify-code', [UserAuthController::class, 'verifyCode']);
     Route::post('reset-password', [UserAuthController::class, 'resetPassword']);
     Route::post('/Home', [HomePageController::class, 'index']);
+    Route::get('/Model/{id}', [HomePageController::class, 'show']);
     
 });
 ///////////////////////////////User Routes////////////////////////////////////
