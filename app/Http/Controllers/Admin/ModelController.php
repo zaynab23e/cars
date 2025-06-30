@@ -81,7 +81,7 @@ public function update(string $brandId, string $typeId, Request $request, $id)
         if (!$type) {
             return response()->json(['message' => 'النوع غير موجود في هذا البراند'], 404);
         }
-        $model = $type->models()->find($id);
+        $model = $type->carmodels()->find($id);
         if (!$model) {
             return response()->json(['message' => 'الموديل غير موجود في هذا البراند'], 404);
         }        
@@ -90,7 +90,7 @@ public function update(string $brandId, string $typeId, Request $request, $id)
         $filename = time() . '.' . $file->getClientOriginalExtension();
 
         $filename = $file->store('models', 'public');
-        $model::update([
+        $model->update([
             'name' => $request->name,
             'year' => $request->year,
             'price' => $request->price,

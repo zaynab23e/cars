@@ -11,15 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('cars', function (Blueprint $table) {
-            $table->id();
+        Schema::table('bookings', function (Blueprint $table) {
             $table->unsignedBigInteger('carmodel_id');
-            $table->string('plate_number')->unique();
-            $table->enum('status', ["available", "rented", "maintenance"])->default('available');
-            $table->string('image');
-            $table->string('color');
             $table->foreign('carmodel_id')->references('id')->on('carmodels')->onDelete('cascade');
-            $table->timestamps();
         });
     }
 
@@ -28,6 +22,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('cars');
+        Schema::table('bookings', function (Blueprint $table) {
+            $table->dropForeign(['carmodel_id']);
+            $table->dropColumn('carmodel_id');  
+        });
     }
 };

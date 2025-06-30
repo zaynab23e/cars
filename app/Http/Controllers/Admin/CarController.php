@@ -31,7 +31,7 @@ public function store(Request $request, $brandId, $typeId, $modelId)
 
     $request->validate([
         'plate_number' => 'required|string|unique:cars',
-        'status' => 'required|string',
+        'status' => 'nullable|string',
         'color' => 'nullable|string',
         'image' => 'nullable|image|max:2048',
         'images' => 'nullable|array',

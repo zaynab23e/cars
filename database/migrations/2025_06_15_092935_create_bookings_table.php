@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('bookings', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('car_id');
+            $table->unsignedBigInteger('car_id')->nullable();
             $table->foreign('car_id')->references('id')->on('cars')->onDelete('cascade');
 
             $table->unsignedBigInteger('user_id');

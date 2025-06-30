@@ -18,10 +18,11 @@ class HomePageController extends Controller
     {
         // return response()->json(['request'=>$request->all()]);
         $query = CarModel::with('type.brand')->select('id', 'name', 'year', 'price', 'image', 'type_id');
-            if ($request->has('brand') && $request->brand !== null) {
-            $query->whereHas('type.brand', function ($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->brand . '%');
-            });
+
+        if ($request->has('brand') && $request->brand !== null) {
+        $query->whereHas('type.brand', function ($q) use ($request) {
+            $q->where('name', 'like', '%' . $request->brand . '%');
+        });
         }
         if ($request->has('type') && $request->type !== null) {
             $query->whereHas('type', function ($q) use ($request) {
@@ -48,35 +49,22 @@ class HomePageController extends Controller
         return ModelResource::collection($models);
     }
 
-
-    public function carBooking(string $id, bokingStore $request)
+/////////////////////////Sales////////////////////////
+    public function setOrderStatus(string $modelId,string $id, Request $request)
     {
-        // return response()->json($request->all());
-        $model = CarModel::find($id);
-        if (!$model) {
-            return response()->json(['message' => 'الموديل غير موجود'], 404);
+        $booking = Booking::find($id);
+        if (!$booking) {
+            return response()->json(['message' => 'الحجز غير موجود'], 404);
         }
-        $price = $model->price;
-        $days = ((strtotime($request->end_date) - strtotime($request->start_date)) / (60 * 60 * 24)) + 1;
-        $finalPrice = $price * $days;
-        $user = Auth::guard('user')->user();
-        if (!$user) {
-            return response()->json(['message' => 'المستخدم غير مصرح له'], 403);
-        }
-        $validated = $request->validated();
-        $booking = Booking::create([
-            'start_date' => $validated['start_date'],
-            'end_date' => $validated['end_date'],
-            'final_price' => $finalPrice,
-            'user_id' => $user->id,
-        ]);
-        return response()->json(['message' => 'تم إنشاء الحجز بنجاح',
-         'data' =>[
-            'booking' => $booking,
-            'car_model' => new ModelResource($model),
-            'user' => $user,
-         ] 
         
-        ], 201);
+        $validated = $request->validate([
+            'status' => 'required|in:pending,confirmed,assigned,canceled,completed',
+        ]);
+        
+        $booking->status = $validated['status'];
+        $booking->save();
+
+        return response()->json(['message' => 'تم تحديث طريقة الدفع بنجاح', 'data' => $booking], 200);
     }
+
 }

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Booking extends Model
 {
-  protected $fillable = ['car_id','user_id','driver_id','start_date','end_date','final_price','status']; 
+  protected $fillable = ['carmodel_id','car_id','user_id','driver_id','start_date','end_date','final_price','status','payment_method','payment_status','transaction_id']; 
 
   public function user()
   {
@@ -16,6 +16,11 @@ class Booking extends Model
   {
     return $this->belongsTo(Car::class);
   }
+  public function carModel()
+  {
+      return $this->belongsTo(CarModel::class, 'carmodel_id');
+  }
+
   public function driver()
   {
     return $this->belongsTo(Driver::class);
