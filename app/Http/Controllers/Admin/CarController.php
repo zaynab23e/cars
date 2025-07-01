@@ -97,7 +97,7 @@ public function show($id)
 //________________________________________________________________________________________________________
 public function related()
 {
-    $cars = CarModel::inRandomOrder()->take(3)->get();
+    $cars = CarModel::inRandomOrder()->take(7)->get();
     return response()->json($cars);
 }
 // __________________________________________________________________________________________
