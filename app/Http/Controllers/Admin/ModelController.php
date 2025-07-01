@@ -104,29 +104,39 @@ public function update(string $brandId, string $typeId, Request $request, $id)
     }
     // ____________________________________________________________
     public function show(string $brandId, string $typeId, $id)
+    {
+        $type = Type::where('id', $typeId)->get();
 
-{
+        if (!$type) {
+            return response()->json(['message' => 'النوع لا يتبع هذا البراند'], 404);
+        }
 
-    $type = Type::where('id', $typeId)->get();
+        $model = CarModel::find($id);
+        if (!$model) {
+            return response()->json(['message' => 'الموديل غير موجود'], 404);
+        }
 
-    if (!$type) {
-        return response()->json(['message' => 'النوع لا يتبع هذا البراند'], 404);
+        if (!$model->type->brand) {
+            return response()->json(['message' => 'الموديل لا ينتمي لهذا النوع أو البراند'], 403);
+        }
+
+        return response()->json($model);
     }
-
-    $model = CarModel::findOrFail($id);
-
-    if (!$model->type->brand ) {
-        return response()->json(['message' => 'الموديل لا ينتمي لهذا النوع أو البراند'], 403);
-    }
-
-    return response()->json($model);
-}
 // ____________________________________________________________
     public function destroy(string $brandId, string $typeId, $id)
     {
-            $brand = Brand::findOrFail($brandId);
-            $type = $brand->types()->findOrFail($typeId);
-            $model = CarModel::findOrFail($id);
+            $brand = Brand::find($brandId);
+        if (!$brand) {
+            return response()->json(['message' => 'البراند غير موجود'], 404);
+        }
+            if (!$brand->types()->find($typeId)) {
+            return response()->json(['message' => 'النوع غير موجود في هذا البراند'], 404);
+        }
+            // $type = $brand->types()->find($typeId);
+            $model = CarModel::find($id);
+            if (!$model) {
+                return response()->json(['message' => 'الموديل غير موجود'], 404);
+            }
 
         if (!$model->type->brand) {
             return response()->json(['message' => 'هذا الموديل لا ينتمي لهذا البراند'], 403);

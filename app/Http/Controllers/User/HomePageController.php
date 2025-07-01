@@ -9,6 +9,7 @@ use App\Http\Resources\ModelResource;
 use App\Models\Booking;
 use App\Models\Brand;
 use App\Models\CarModel;
+use App\Models\Type;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -47,6 +48,18 @@ class HomePageController extends Controller
         $models = $query->get();
 
         return ModelResource::collection($models);
+    }
+    public function show($id)
+    {
+        $model = CarModel::with('type.brand')->select('id', 'name', 'year', 'price', 'image', 'type_id')->find($id);
+        if (!$model) {
+            return response()->json(['message' => 'الموديل غير موجود'], 404);
+        }
+        if (!$model->type->brand) {
+            return response()->json(['message' => 'الموديل لا ينتمي لهذا النوع أو البراند'], 403);
+        }
+
+        return response()->json($model);
     }
 
 /////////////////////////Sales////////////////////////
