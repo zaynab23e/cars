@@ -73,7 +73,7 @@ Route::prefix('/user')->group(function () {
     Route::get('/related', [CarController::class, 'related']);
     Route::post('/Home', [HomePageController::class, 'index']);
     Route::get('/Model/{id}', [HomePageController::class, 'show']);
-    Route::get('/filterInfo', [HomePageController::class, 'filterInfo']);
+    Route::get('/filter-Info', [HomePageController::class, 'filterInfo']);
 
 });
 
