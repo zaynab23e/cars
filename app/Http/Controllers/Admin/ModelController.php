@@ -8,6 +8,8 @@ use App\Models\Car;
 use Illuminate\Http\Request;
 use App\Models\CarModel;
 use App\Models\Type;
+use App\Http\Resources\ModelResource;
+
 
 class ModelController extends Controller
 {
@@ -24,12 +26,13 @@ class ModelController extends Controller
         }
 
         $models = $type->carModels()->with('type.brand')->get(['id', 'name', 'year', 'price', 'image', 'type_id']);
-        return response()->json($models);
+        return ModelResource::collection($models);
     }
 
 // ____________________________________________________________
     public function store(string $brandId, string $typeId, Request $request)
     {
+        $filename = null;
         // return response()->json([$request->all()]);
         $request->validate([
             'name' => 'required|string',
@@ -46,16 +49,19 @@ class ModelController extends Controller
         if (!$type) {
             return response()->json(['message' => 'النوع غير موجود في هذا البراند'], 404);
         }
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $filename = time() . '.' . $file->getClientOriginalExtension();
+    
+            // نحفظ الصورة في مجلد public/item مباشرة
+            $file->move(public_path('models'), $filename);
+        }        
 
-        $file = $request->file('image'); // You have an UploadedFile instance
-        $filename = time() . '.' . $file->getClientOriginalExtension();
-
-        $filename = $file->store('models', 'public');
         $model = CarModel::create([
             'name' => $request->name,
             'year' => $request->year,
             'price' => $request->price,
-            'image' => $filename,
+            'image' => $filename ? 'models/' . $filename : null,
             'type_id' => $type->id,
         ]);
 
@@ -85,17 +91,32 @@ public function update(string $brandId, string $typeId, Request $request, $id)
         if (!$model) {
             return response()->json(['message' => 'الموديل غير موجود في هذا البراند'], 404);
         }        
-
-        $file = $request->file('image'); // You have an UploadedFile instance
-        $filename = time() . '.' . $file->getClientOriginalExtension();
-
-        $filename = $file->store('models', 'public');
-        $model->update([
-            'name' => $request->name,
-            'year' => $request->year,
-            'price' => $request->price,
-            'image' => $filename,
-        ]);
+        if ($request->hasFile('image')) {
+            // حذف الصورة القديمة لو موجودة
+            // if ($model->image && file_exists(public_path($model->image))) {
+            //     unlink(public_path($model->image));
+            // }
+    
+            $file = $request->file('image');
+            $filename = time() . '.' . $file->getClientOriginalExtension();
+    
+            // نحفظ الصورة في نفس المجلد زي store()
+            $file->move(public_path('models'), $filename);
+    
+            // نسجل نفس المسار زي ما في store
+            $model->image = 'models/' . $filename;
+        } 
+        
+            $model->name = $request->name;
+            $model->year = $request->year;
+            $model->price = $request->price;
+            if (!$model->save()) {
+                return response()->json([
+                    'status' => 'Error has occurred...',
+                    'message' => 'Model update failed',
+                    'data' => null
+                ], 500);
+            }            
 
         return response()->json([
             'message' => 'تم إضافة الموديل بنجاح',
@@ -120,7 +141,7 @@ public function update(string $brandId, string $typeId, Request $request, $id)
             return response()->json(['message' => 'الموديل لا ينتمي لهذا النوع أو البراند'], 403);
         }
 
-        return response()->json($model);
+        return new ModelResource($model);
     }
 // ____________________________________________________________
     public function destroy(string $brandId, string $typeId, $id)

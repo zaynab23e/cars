@@ -9,6 +9,8 @@ use App\Models\Brand;
 use App\Traits\HttpResponses;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
+
 
 class AdminBrandsController extends Controller
 {
@@ -24,6 +26,7 @@ class AdminBrandsController extends Controller
 
     public function store(Request $request)
     {
+         $filename = null;
         // Store the Brand in the database
         $request->validate([
             'name' => 'required|string|max:255',
@@ -32,12 +35,12 @@ class AdminBrandsController extends Controller
             if ($request->hasFile('logo')) {
             $file = $request->file('logo'); // You have an UploadedFile instance
             $filename = time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('brands'), $filename);
 
-            $filename = $file->store('brands', 'public');
 
             $brand = Brand::create([
                 'name' => $request->name,
-                'logo' => $filename,
+                'logo' => $filename ? 'brands/' . $filename : null,
             ]);
         }
         if (!$brand) {
@@ -63,22 +66,39 @@ class AdminBrandsController extends Controller
             ], 500);
         }        
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:brands,name,' . $brand->id,
             "logo" => 'required|image|max:2048'
-        ]);        
-        // Find the Brand and update it
+        ]);  
             if ($request->hasFile('logo')) {
-            $file = $request->file('logo'); // You have an UploadedFile instance
-            $filename = time() . '.' . $file->getClientOriginalExtension();
+                // حذف الصورة القديمة لو موجودة
+                if ($brand->logo && file_exists(public_path($brand->logo))) {
+                    unlink(public_path($brand->logo));
+                }
+        
+                $file = $request->file('logo');
+                $filename = time() . '.' . $file->getClientOriginalExtension();
+        
+                // نحفظ الصورة في نفس المجلد زي store()
+                $file->move(public_path('brands'), $filename);
+        
+                // نسجل نفس المسار زي ما في store
+                $brand->logo = 'brands/' . $filename;
+            }
+            
+            $brand->name =$request->name;
+        // Find the Brand and update it
+        //     if ($request->hasFile('logo')) {
+        //     $file = $request->file('logo'); // You have an UploadedFile instance
+        //     $filename = time() . '.' . $file->getClientOriginalExtension();
 
-            $filename = $file->store('brands', 'public');
+        //     $filename = $file->store('brands', 'public');
 
-            $brand->update([
-                'name' => $request->name,
-                'logo' => $filename,
-            ]);
-        }
-        if (!$brand) {
+        //     $brand->update([
+        //         'name' => $request->name,
+        //         'logo' => $filename,
+        //     ]);
+        // }
+        if (!$brand->save()) {
             return response()->json([
                 'status' => 'Error has occurred...',
                 'message' => 'Brand updated failed',

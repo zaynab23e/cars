@@ -40,7 +40,9 @@ public function store(Request $request, $brandId, $typeId, $modelId)
 
     $imagePath = null;
     if ($request->hasFile('image')) {
-        $imagePath = $request->file('image')->store('cars', 'public');
+        $file = $request->file('image');        
+        $imagePath = time() . '.' . $file->getClientOriginalExtension();
+        $file->move(public_path('cars'), $imagePath);        
     }
 
 
@@ -49,7 +51,7 @@ public function store(Request $request, $brandId, $typeId, $modelId)
         'plate_number' => $request->plate_number,
         'status' => $request->status,
         'color' => $request->color,
-        'image' => $imagePath,
+        'image' => $imagePath ? 'cars/' . $imagePath : null,
     ]);
 
 
@@ -116,16 +118,31 @@ public function update(Request $request, $brandId, $typeId, $modelId, Car $car)
 
     
     if ($request->hasFile('image')) {
-        $car->image = $request->file('image')->store('cars', 'public');
+        // حذف الصورة القديمة لو موجودة
+        if ($car->image && file_exists(public_path($car->image))) {
+            unlink(public_path($car->image));
+        }
+
+        $file = $request->file('image');
+        $filename = time() . '.' . $file->getClientOriginalExtension();
+
+        // نحفظ الصورة في نفس المجلد زي store()
+        $file->move(public_path('cars'), $filename);
+
+        // نسجل نفس المسار زي ما في store
+        $car->image = 'cars/' . $filename;
     }
+           $car->plate_number = $request->plate_number ?? $car->plate_number;
+           $car->status = $request->status ?? $car->status;
+           $car->color = $request->color ?? $car->color;
 
-
-    $car->update([
-        'plate_number' => $request->plate_number ?? $car->plate_number,
-        'status' => $request->status ?? $car->status,
-        'color' => $request->color ?? $car->color,
-        'image' => $car->image, 
-    ]);
+    if (!$car->save()) {
+        return response()->json([
+            'status' => 'Error has occurred...',
+            'message' => 'Car update failed',
+            'data' => null
+        ], 500);
+    }
 
     return response()->json([
         'message' => 'تم تحديث السيارة بنجاح',
@@ -134,7 +151,7 @@ public function update(Request $request, $brandId, $typeId, $modelId, Car $car)
             'plate_number' => $car->plate_number,
             'status' => $car->status,
             'color' => $car->color,
-            'main_image' => $car->image ? asset('storage/' . $car->image) : null,
+            'main_image' => $car->image ? asset($car->image) : null,
         ]
     ]);
 }

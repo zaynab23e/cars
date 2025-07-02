@@ -3,12 +3,13 @@
 use App\Http\Controllers\Admin\AdminBrandsController;
 use App\Http\Controllers\Admin\AdminsAuthController;
 use App\Http\Controllers\Admin\AdminTypesController;
-use App\Http\Controllers\user\AuthController as UserAuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\User\UserAuthController;
 use App\Http\Controllers\Admin\ModelController;
 use App\Http\Controllers\Admin\BookingController;
+use App\Http\Controllers\User\UserBookingController;
 use App\Http\Controllers\Admin\CarController;
 use App\Http\Controllers\User\HomePageController;
 use App\Http\Controllers\User\ProfileController;
@@ -48,8 +49,7 @@ Route::middleware('admin')->prefix('/admin')->group(function () {
     Route::post('/Booking/{id}', [BookingController::class, 'update']); 
     Route::delete('/Booking/{id}', [BookingController::class, 'destroy']); 
 
-    Route::post('/Booking/{id}/assign-driver', [BookingController::class, 'assignDriver']);
-    Route::post('/Booking/{id}/change-status', [BookingController::class, 'changeStatus']);
+
     //car
     Route::get('Brands/{brandId}/Types/{typeId}/Models/{modelId}/Cars', [CarController::class, 'index']);
     Route::post('Brands/{brandId}/Types/{typeId}/Models/{modelId}/Cars', [CarController::class, 'store']);
@@ -65,8 +65,8 @@ Route::middleware('admin')->prefix('/admin')->group(function () {
 
 Route::prefix('/user')->group(function () {
 
-    Route::post('register', [UserAuthController::class, 'register']);
-    Route::post('login', [UserAuthController::class, 'login']);
+    Route::post('/register', [UserAuthController::class, 'register']);
+    Route::post('/login', [UserAuthController::class, 'login']);
     Route::post('forgot-password', [UserAuthController::class, 'forgotPassword']);
     Route::post('verify-code', [UserAuthController::class, 'verifyCode']);
     Route::post('reset-password', [UserAuthController::class, 'resetPassword']);
@@ -81,14 +81,16 @@ Route::prefix('/user')->group(function () {
 });
 ///////////////////////////////User Routes////////////////////////////////////
 Route::middleware('user')->prefix('/user')->group(function () {
-    Route::post('/user-location', [BookingController::class, 'userLocation']);
-    Route::post('/Model/{id}/car-booking', [BookingController::class, 'carBooking']);
-    Route::post('/Model/{modelId}/car-booking/{id}/payment-method', [BookingController::class, 'setPaymentMethod']);
-    Route::post('/Model/{modelId}/car-booking/{id}/paymob-info', [BookingController::class, 'setPaymobInfo']);
+    Route::post('/user-location', [UserBookingController::class, 'userLocation']);
+    Route::post('/Model/{id}/car-booking', [UserBookingController::class, 'carBooking']);
+    Route::post('/Model/{modelId}/car-booking/{id}/payment-method', [UserBookingController::class, 'setPaymentMethod']);
+    Route::post('/Model/{modelId}/car-booking/{id}/paymob-info', [UserBookingController::class, 'setPaymobInfo']);
     Route::post('/update-profile', [ProfileController::class, 'updateUserProfile']);    
     Route::get('/booking-list', [ProfileController::class, 'bookingList']);
 
 /////////////////////////Sales////////////////////////
+    Route::post('/Booking/{id}/assign-driver', [BookingController::class, 'assignDriver']);
+    Route::post('/Booking/{id}/change-status', [BookingController::class, 'changeStatus']);
     Route::post('/Model/{modelId}/car-status/{id}', [HomePageController::class, 'setOrderStatus']);
 /////////////////////////////////////////////////////
 

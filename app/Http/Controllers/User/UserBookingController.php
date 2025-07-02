@@ -9,7 +9,7 @@ use App\Models\CarModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class BookingController extends Controller
+class UserBookingController extends Controller
 {
     public function carBooking(string $id, bokingStore $request)
     {

@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\DB;
 
-class AuthController extends Controller
+class UserAuthController extends Controller
 {
     
     // _________________________________________________________________________________________________________
