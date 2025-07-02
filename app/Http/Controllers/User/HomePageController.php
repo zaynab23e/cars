@@ -63,7 +63,16 @@ class HomePageController extends Controller
     }
     public function filterInfo()
     {
-        $brands = Brand::get(['name', 'logo']);
+        $brands = Brand::get(['id', 'name', 'logo'])
+            ->map(function ($brand) {
+                return [
+                    'id' => (string) $brand->id,
+                    'attributes' => [
+                        'name' => $brand->name,
+                        'logo' => $brand->logo ? asset($brand->logo) : null,
+                    ],
+                ];
+            });
         $types = Type::pluck('name')
             ->map(fn($type) => strtolower($type))
             ->unique()
