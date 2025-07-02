@@ -18,7 +18,7 @@ class BrandsResource extends JsonResource
             'id' => (string)$this->id,
             'attributes' =>[
                 'name' =>$this->name,
-                'logo' => $this->logo
+                'logo' => $this->logo  ? asset($this->logo) : null
             ],
             'relationship' => [
                 'Types' => TypesResource::collection($this->types),
