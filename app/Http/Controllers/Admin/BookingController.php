@@ -16,15 +16,7 @@ class BookingController extends Controller
         $bookings = Booking::with(['user', 'car', 'driver'])->latest()->get();
         return response()->json(['data' => $bookings], 200);
     }
-    //________________________________________________________________________________________________________
-    public function store(bokingStore $request)
-    {
-        $validated = $request->validated();
 
-        $booking = Booking::create($validated);
-
-        return response()->json(['message' => 'تم إنشاء الحجز بنجاح', 'data' => $booking], 201);
-    }
 //__________________________________________________________________________________________________________
     public function show($id)
     {
@@ -36,21 +28,6 @@ class BookingController extends Controller
 
         return response()->json(['data' => $booking], 200);
     }
-//________________________________________________________________________________________________________
-public function update(bokingupdate $request, $id)
-{
-    $booking = Booking::find($id);
-    
-    if (!$booking) {
-        return response()->json(['message' => 'الحجز غير موجود'], 404);
-    }
-    
-    $validated = $request->validated();
-    
-    $booking->update($validated);
-    
-    return response()->json(['message' => 'تم تحديث الحجز بنجاح', 'data' => $booking], 200);
-}
 //________________________________________________________________________________________________________
 
 public function destroy($id)
@@ -102,5 +79,4 @@ public function changeStatus(Request $request, $id)
     
     return response()->json(['message' => 'تم تحديث حالة الحجز بنجاح', 'data' => $booking], 200);
 }
-//_______________________________________________________________________________________________________
 }

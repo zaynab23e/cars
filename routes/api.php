@@ -67,13 +67,14 @@ Route::prefix('/user')->group(function () {
 
     Route::post('/register', [UserAuthController::class, 'register']);
     Route::post('/login', [UserAuthController::class, 'login']);
-    Route::post('forgot-password', [UserAuthController::class, 'forgotPassword']);
-    Route::post('verify-code', [UserAuthController::class, 'verifyCode']);
-    Route::post('reset-password', [UserAuthController::class, 'resetPassword']);
+    Route::post('/forgot-password', [UserAuthController::class, 'forgotPassword']);
+    Route::post('/verify-code', [UserAuthController::class, 'verifyCode']);
+    Route::post('/reset-password', [UserAuthController::class, 'resetPassword']);
     Route::get('/related', [CarController::class, 'related']);
     Route::post('/Home', [HomePageController::class, 'index']);
     Route::get('/Model/{id}', [HomePageController::class, 'show']);
-    
+    Route::get('/filterInfo', [HomePageController::class, 'filterInfo']);
+
 });
 
 
@@ -91,7 +92,6 @@ Route::middleware('user')->prefix('/user')->group(function () {
 /////////////////////////Sales////////////////////////
     Route::post('/Booking/{id}/assign-driver', [BookingController::class, 'assignDriver']);
     Route::post('/Booking/{id}/change-status', [BookingController::class, 'changeStatus']);
-    Route::post('/Model/{modelId}/car-status/{id}', [HomePageController::class, 'setOrderStatus']);
 /////////////////////////////////////////////////////
 
 

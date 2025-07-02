@@ -61,23 +61,25 @@ class HomePageController extends Controller
 
         return response()->json($model);
     }
-
-/////////////////////////Sales////////////////////////
-    public function setOrderStatus(string $modelId,string $id, Request $request)
+    public function filterInfo()
     {
-        $booking = Booking::find($id);
-        if (!$booking) {
-            return response()->json(['message' => 'الحجز غير موجود'], 404);
-        }
-        
-        $validated = $request->validate([
-            'status' => 'required|in:pending,confirmed,assigned,canceled,completed',
-        ]);
-        
-        $booking->status = $validated['status'];
-        $booking->save();
+        $brands = Brand::get(['name', 'logo']);
+        $types = Type::pluck('name')
+            ->map(fn($type) => strtolower($type))
+            ->unique()
+            ->values()
+            ->map(fn($type) => ['name' => $type]);
 
-        return response()->json(['message' => 'تم تحديث طريقة الدفع بنجاح', 'data' => $booking], 200);
+        $maxPrice = CarModel::max('price');
+        $minPrice = CarModel::min('price');
+
+        return response()->json([
+            'brands' => $brands,
+            'types' => $types,
+            'max_price' => $maxPrice,
+            'min_price' => $minPrice,
+        ]);
     }
 
+/////////////////////////Sales////////////////////////
 }
