@@ -89,10 +89,11 @@ Route::middleware('user')->prefix('/user')->group(function () {
     Route::post('/update-profile', [ProfileController::class, 'updateUserProfile']);    
     Route::get('/booking-list', [ProfileController::class, 'bookingList']);
 
-/////////////////////////Sales////////////////////////
+/////////////////////////Sales/////////////////////////
     Route::post('/Booking/{id}/assign-driver', [BookingController::class, 'assignDriver']);
     Route::post('/Booking/{id}/change-status', [BookingController::class, 'changeStatus']);
-/////////////////////////////////////////////////////
+    Route::get('/TEST', [UserBookingController::class, 'TEST']);
+//////////////////////////////////////////////////////e
 
 
 
