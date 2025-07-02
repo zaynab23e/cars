@@ -92,8 +92,7 @@ Route::middleware('user')->prefix('/user')->group(function () {
 /////////////////////////Sales/////////////////////////
     Route::post('/Booking/{id}/assign-driver', [BookingController::class, 'assignDriver']);
     Route::post('/Booking/{id}/change-status', [BookingController::class, 'changeStatus']);
-    Route::get('/TEST!!!!', [UserBookingController::class, 'TEST']);
-//////////////////////////////////////////////////////e
+//////////////////////////////////////////////////////
 
 
 

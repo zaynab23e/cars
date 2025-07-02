@@ -59,7 +59,7 @@ class HomePageController extends Controller
             return response()->json(['message' => 'الموديل لا ينتمي لهذا النوع أو البراند'], 403);
         }
 
-        return response()->json($model);
+        return new ModelResource($model);
     }
     public function filterInfo()
     {
