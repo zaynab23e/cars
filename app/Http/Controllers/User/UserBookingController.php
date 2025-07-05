@@ -26,12 +26,24 @@ class UserBookingController extends Controller
             return response()->json(['message' => 'المستخدم غير مصرح له'], 403);
         }
         $validated = $request->validated();
+        if ($request->additional_driver == true) {
+            if (!$request->has('longitude') || !$request->has('latitude')) {
+                return response()->json(['message' => 'يجب تحديد الموقع للمستخدم'], 422);
+            }else {
+                $user->longitude = $validated['longitude'];
+                $user->latitude = $validated['latitude'];
+                $user->location = $validated['location'];
+                $user->save();
+            }
+            // $finalPrice += 100; // Assuming an additional charge for an additional driver
+        }
         $booking = Booking::create([
             'start_date' => $validated['start_date'],
             'end_date' => $validated['end_date'],
             'final_price' => $finalPrice,
             'user_id' => $user->id,
             'carmodel_id' => $model->id,
+            'additional_driver' => $request->additional_driver,
         ]);
         return response()->json(['message' => 'تم إنشاء الحجز بنجاح',
          'data' =>[

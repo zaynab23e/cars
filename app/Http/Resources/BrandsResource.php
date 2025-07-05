@@ -26,3 +26,9 @@ class BrandsResource extends JsonResource
         ];
     }
 }
+
+//             'relationship' => $this->whenLoaded('types', function () {
+//     return [
+//         'Types' => TypesResource::collection($this->types),
+//     ];
+// }),

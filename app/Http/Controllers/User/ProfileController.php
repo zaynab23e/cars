@@ -7,6 +7,8 @@ use App\Http\Resources\ModelResource;
 use App\Models\Booking;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
+
 
 class ProfileController extends Controller
 {
@@ -19,19 +21,40 @@ class ProfileController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:users,email,' . $user->id,
-            'phone' => 'required|string|max:15|unique:users,phone,' . $user->id,
+            'email' => 'required|email|max:255|unique:users,email,' . $user->id . ',id',
+            'phone' => 'required|string|max:15|unique:users,phone,' . $user->id . ',id',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
         
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('users', 'public');
-            $validated['image'] = $imagePath;
-        }
+        // if ($request->hasFile('image')) {
+        //     $imagePath = $request->file('image')->store('users', 'public');
+        //     $validated['image'] = $imagePath;
+        // }
+            if ($request->hasFile('image')) {
+                // حذف الصورة القديمة لو موجودة
+                if ($user->image && file_exists(public_path($user->image))) {
+                    unlink(public_path($user->image));
+                }
+        
+                $file = $request->file('image');
+                $filename = time() . '.' . $file->getClientOriginalExtension();
+        
+                // نحفظ الصورة في نفس المجلد زي store()
+                $file->move(public_path('users'), $filename);
+        
+                // نسجل نفس المسار زي ما في store
+                $user->image = 'users/' . $filename;
+            }        
 
         $user->update($validated);
-
-        return response()->json(['message' => 'تم تحديث الملف الشخصي بنجاح', 'data' => $user], 200);
+        return response()->json(['message' => 'تم تحديث الملف الشخصي بنجاح', 'data' => [
+            'id' => $user->id,
+            'name' => $user->name,
+            'last_name' => $user->last_name,
+            'image' => $filename ? asset('users/' . $filename) : null, // Return full URL for image
+            'email' => $user->email,
+            'phone' => $user->phone,
+        ]], 200);
     }
 
     public function bookingList()
