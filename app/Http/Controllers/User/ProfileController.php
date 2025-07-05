@@ -14,6 +14,7 @@ class ProfileController extends Controller
 {
     public function updateUserProfile(Request $request)
     {
+        $filename = null; // Initialize filename to null
         $user = Auth::guard('user')->user();
         if (!$user) {
             return response()->json(['message' => 'المستخدم غير مصرح له'], 403);
@@ -44,17 +45,41 @@ class ProfileController extends Controller
         
                 // نسجل نفس المسار زي ما في store
                 $user->image = 'users/' . $filename;
+                // return response()->json(['message' => 'تم تحديث الصورة بنجاح', 'image' =>$user->image], 200);
             }        
-
-        $user->update($validated);
+            
+            $user->name = $validated['name'];
+            $user->last_name = $validated['last_name'];
+            $user->email = $validated['email'];
+            $user->phone = $validated['phone'];
+            $user->save();
         return response()->json(['message' => 'تم تحديث الملف الشخصي بنجاح', 'data' => [
             'id' => $user->id,
             'name' => $user->name,
             'last_name' => $user->last_name,
-            'image' => $filename ? asset('users/' . $filename) : null, // Return full URL for image
+            'image' => $user->image ? asset($user->image) : null, // Return full URL for image
             'email' => $user->email,
             'phone' => $user->phone,
         ]], 200);
+    }
+    public function userProfile()
+    {
+        $user = Auth::guard('user')->user();
+        if (!$user) {
+            return response()->json(['message' => 'المستخدم غير مصرح له'], 403);
+        }
+        return response()->json([
+            'message' => 'تم استرجاع الملف الشخصي بنجاح',
+            'data' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'last_name' => $user->last_name,
+                'image' => $user->image ? asset($user->image) : null, // Return full URL for image
+                'email' => $user->email,
+                'phone' => $user->phone,
+                'location' => $user->location,
+            ]
+        ]);
     }
 
     public function bookingList()

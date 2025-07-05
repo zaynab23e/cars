@@ -86,7 +86,8 @@ Route::middleware('user')->prefix('/user')->group(function () {
     Route::post('/Model/{id}/car-booking', [UserBookingController::class, 'carBooking']);
     Route::post('/Model/{modelId}/car-booking/{id}/payment-method', [UserBookingController::class, 'setPaymentMethod']);
     Route::post('/Model/{modelId}/car-booking/{id}/paymob-info', [UserBookingController::class, 'setPaymobInfo']);
-    Route::post('/update-profile', [ProfileController::class, 'updateUserProfile']);    
+    Route::post('/update-profile', [ProfileController::class, 'updateUserProfile']);
+    Route::get('/user-profile', [ProfileController::class, 'userProfile']);    
     Route::get('/booking-list', [ProfileController::class, 'bookingList']);
 
 /////////////////////////Sales/////////////////////////
