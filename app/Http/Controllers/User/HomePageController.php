@@ -42,10 +42,9 @@ class HomePageController extends Controller
         if ($request->has('max_price') && is_numeric($request->max_price)) {
             $query->where('price', '<=', $request->max_price);
         }
-        
-        
 
-        $models = $query->get();
+
+        $models = $query->paginate(2);
 
         return ModelResource::collection($models);
     }
