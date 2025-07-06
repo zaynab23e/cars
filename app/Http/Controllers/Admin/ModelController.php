@@ -139,7 +139,7 @@ public function update(string $brandId, string $typeId, Request $request, $id)
             }            
 
         return response()->json([
-            'message' => 'تم إضافة الموديل بنجاح',
+            'message' => 'تم تعديل الموديل بنجاح',
             'data' => $model
         ]);
     }
