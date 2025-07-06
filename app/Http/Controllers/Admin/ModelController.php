@@ -38,7 +38,9 @@ class ModelController extends Controller
             'name' => 'required|string',
             'year' => 'required|integer',
             'price' => 'required|numeric',
-            'image' => 'required|image|max:2048'
+            'image' => 'required|image|max:2048',
+            'engine_type' => 'required|in:Gasoline,Electric,Hybrid,Plug-in Hybrid',
+            'transmission_type' => 'required|in:Manual,Automatic,Hydramatic,CVT,DCT',
 
         ]);
         $brand = Brand::find($brandId);
@@ -63,6 +65,9 @@ class ModelController extends Controller
             'price' => $request->price,
             'image' => $filename ? 'models/' . $filename : null,
             'type_id' => $type->id,
+            'engine_type' => $request->engine_type,
+            'transmission_type' => $request->transmission_type,
+
         ]);
 
         return response()->json([
@@ -77,7 +82,9 @@ public function update(string $brandId, string $typeId, Request $request, $id)
             'name' => 'required|string',
             'year' => 'required|integer',
             'price' => 'required|numeric',
-            'image' => 'required|image|max:2048'
+            'image' => 'required|image|max:2048',
+            'engine_type' => 'required|in:Gasoline,Electric,Hybrid,Plug-in Hybrid',
+            'transmission_type' => 'required|in:Manual,Automatic,Hydramatic,CVT,DCT',
         ]);
         $brand = Brand::find($brandId);
         if (!$brand) {
@@ -110,6 +117,8 @@ public function update(string $brandId, string $typeId, Request $request, $id)
             $model->name = $request->name;
             $model->year = $request->year;
             $model->price = $request->price;
+            $model->engine_type = $request->engine_type;
+            $model->transmission_type = $request->transmission_type;
             if (!$model->save()) {
                 return response()->json([
                     'status' => 'Error has occurred...',

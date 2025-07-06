@@ -10,7 +10,17 @@ class CarModel extends Model
     protected $hidden = ['created_at', 'updated_at'];
 
 
-    protected $fillable = ['name', 'year', 'count', 'price', 'image', 'type_id'];
+    protected $fillable = [
+        'name',
+        'year',
+        'count', 
+        'price', 
+        'image',
+        'type_id',
+        'engine_type',
+        'transmission_type',
+    
+    ];
 
     public function type()
     {

@@ -26,7 +26,7 @@ class AdminBrandsController extends Controller
 
     public function store(Request $request)
     {
-         $filename = null;
+        $filename = null;
         // Store the Brand in the database
         $request->validate([
             'name' => 'required|string|max:255',
@@ -123,7 +123,7 @@ class AdminBrandsController extends Controller
                 'data' => ''
             ], 500);
         }
-                  
+
         $brand->delete();
 
         return $this->success('','Brand deleted successfully.');

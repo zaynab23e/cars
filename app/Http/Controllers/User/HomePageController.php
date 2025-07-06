@@ -44,7 +44,7 @@ class HomePageController extends Controller
         }
 
 
-        $models = $query->paginate(2);
+        $models = $query->paginate(10);
 
         return ModelResource::collection($models);
     }
