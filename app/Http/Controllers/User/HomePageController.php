@@ -18,7 +18,7 @@ class HomePageController extends Controller
     public function index(Request $request)
     {
         // return response()->json(['request'=>$request->all()]);
-        $query = CarModel::with('type.brand')->select('id', 'name', 'year', 'price', 'image', 'type_id');
+        $query = CarModel::with('type.brand')->select('id', 'name', 'year', 'price', 'engine_type', 'transmission_type', 'seat_type', 'seats_count', 'acceleration', 'image', 'type_id');
 
         if ($request->has('brand') && $request->brand !== null) {
         $query->whereHas('type.brand', function ($q) use ($request) {
@@ -50,7 +50,7 @@ class HomePageController extends Controller
     }
     public function show($id)
     {
-        $model = CarModel::with('type.brand')->select('id', 'name', 'year', 'price', 'image', 'type_id')->find($id);
+        $model = CarModel::with('type.brand')->select('id', 'name', 'year', 'price', 'engine_type', 'transmission_type', 'seat_type', 'seats_count', 'acceleration', 'image', 'type_id')->find($id);
         if (!$model) {
             return response()->json(['message' => 'الموديل غير موجود'], 404);
         }

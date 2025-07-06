@@ -22,6 +22,9 @@ class ModelResource extends JsonResource
                 'price' =>$this->price,
                 'engine_type' => $this->engine_type,
                 'transmission_type' => $this->transmission_type,
+                'seat_type' => $this->seat_type,
+                'seats_count' => $this->seats_count,
+                'acceleration' => $this->acceleration,
                 'image' =>$this->image ? asset($this->image) : null
 
             ],

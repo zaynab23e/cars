@@ -25,7 +25,7 @@ class ModelController extends Controller
             return response()->json(['message' => 'النوع غير موجود في هذا البراند'], 404);
         }
 
-        $models = $type->carModels()->with('type.brand')->get(['id', 'name', 'year', 'price', 'image', 'type_id']);
+        $models = $type->carModels()->with('type.brand')->get(['id', 'name', 'year', 'price', 'engine_type', 'transmission_type', 'seat_type', 'seats_count', 'acceleration', 'image', 'type_id']);
         return ModelResource::collection($models);
     }
 
@@ -41,7 +41,9 @@ class ModelController extends Controller
             'image' => 'required|image|max:2048',
             'engine_type' => 'required|in:Gasoline,Electric,Hybrid,Plug-in Hybrid',
             'transmission_type' => 'required|in:Manual,Automatic,Hydramatic,CVT,DCT',
-
+            'seat_type' => 'required|in:electric,sport,accessible,leather,fabric',
+            'seats_count' => 'required|integer|min:1',
+            'acceleration' => 'required|numeric|min:0',
         ]);
         $brand = Brand::find($brandId);
         if (!$brand) {
@@ -67,6 +69,9 @@ class ModelController extends Controller
             'type_id' => $type->id,
             'engine_type' => $request->engine_type,
             'transmission_type' => $request->transmission_type,
+            'seat_type' => $request->seat_type,
+            'seats_count' => $request->seats_count,
+            'acceleration' => $request->acceleration,
 
         ]);
 
@@ -85,6 +90,9 @@ public function update(string $brandId, string $typeId, Request $request, $id)
             'image' => 'required|image|max:2048',
             'engine_type' => 'required|in:Gasoline,Electric,Hybrid,Plug-in Hybrid',
             'transmission_type' => 'required|in:Manual,Automatic,Hydramatic,CVT,DCT',
+            'seat_type' => 'required|in:electric,sport,accessible,leather,fabric',
+            'seats_count' => 'required|integer|min:1',
+            'acceleration' => 'required|numeric|min:0',            
         ]);
         $brand = Brand::find($brandId);
         if (!$brand) {
@@ -119,6 +127,9 @@ public function update(string $brandId, string $typeId, Request $request, $id)
             $model->price = $request->price;
             $model->engine_type = $request->engine_type;
             $model->transmission_type = $request->transmission_type;
+            $model->seat_type = $request->seat_type;
+            $model->seats_count = $request->seats_count;
+            $model->acceleration = $request->acceleration;
             if (!$model->save()) {
                 return response()->json([
                     'status' => 'Error has occurred...',

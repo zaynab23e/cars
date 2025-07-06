@@ -19,7 +19,9 @@ class CarModel extends Model
         'type_id',
         'engine_type',
         'transmission_type',
-    
+        'seat_type',
+        'seats_count',
+        'acceleration',
     ];
 
     public function type()
