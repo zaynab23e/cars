@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\BookingController;
 use App\Http\Controllers\User\UserBookingController;
 use App\Http\Controllers\Admin\CarController;
 use App\Http\Controllers\User\HomePageController;
+use App\Http\Controllers\User\LocationController;
 use App\Http\Controllers\User\ProfileController;
 
 Route::middleware('lang')->group(function () {
@@ -82,7 +83,10 @@ Route::prefix('/user')->group(function () {
 });
 ///////////////////////////////User Routes////////////////////////////////////
 Route::middleware('user')->prefix('/user')->group(function () {
-    Route::post('/user-location', [UserBookingController::class, 'userLocation']);
+    Route::post('/user-locations', [LocationController::class, 'setUserLocation']);
+    Route::post('/user-locations/{id}', [LocationController::class, 'updateUserLocation']);
+    Route::get('/user-locations', [LocationController::class, 'getUserLocation']);
+    Route::get('/active-locations', [LocationController::class, 'getUserActiveLocation']);
     Route::post('/Model/{id}/car-booking', [UserBookingController::class, 'carBooking']);
     Route::post('/Model/{modelId}/car-booking/{id}/payment-method', [UserBookingController::class, 'setPaymentMethod']);
     Route::post('/Model/{modelId}/car-booking/{id}/paymob-info', [UserBookingController::class, 'setPaymobInfo']);

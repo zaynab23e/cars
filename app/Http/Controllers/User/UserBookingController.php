@@ -26,14 +26,29 @@ class UserBookingController extends Controller
             return response()->json(['message' => 'المستخدم غير مصرح له'], 403);
         }
         $validated = $request->validated();
+
+
+
+        
         if ($request->additional_driver == true) {
-            if (!$request->has('longitude') || !$request->has('latitude')) {
+
+            if ($request->has('location_id')) {
+                $location = $user->userLocations()->find($request->location_id);
+
+                if (!$location) {
+                    return response()->json(['message' => 'الموقع غير موجود'], 404);
+                }
+
+            }
+            elseif ($request->has('longitude') || $request->has('latitude')) {
+                $location =  $user->userLocations()->create([
+                    'longitude' => $validated['longitude'],
+                    'latitude' => $validated['latitude'],
+                    'location' => $validated['location'],
+                ]);
+            }
+             else {
                 return response()->json(['message' => 'يجب تحديد الموقع للمستخدم'], 422);
-            }else {
-                $user->longitude = $validated['longitude'];
-                $user->latitude = $validated['latitude'];
-                $user->location = $validated['location'];
-                $user->save();
             }
             // $finalPrice += 100; // Assuming an additional charge for an additional driver
         }
@@ -49,32 +64,12 @@ class UserBookingController extends Controller
          'data' =>[
             'booking' => $booking,
             'user' => $user,
+            'location' => isset($location) ? $location : null,
+            'model' => $model,
          ] 
         
         ], 201);
     }
-
-    public function userLocation(Request $request)
-    {
-        $validated = $request->validate([
-            'location' => 'required|string|max:255',
-            'latitude' => 'required|numeric',
-            'longitude' => 'required|numeric',
-        ]);
-        // return response()->json(['request'=>$request->all()]);
-        $user = Auth::guard('user')->user();
-
-        if (!$user) {
-            return response()->json(['message' => 'المستخدم غير مصرح له'], 403);
-        }
-        $user->location = $validated['location'];
-        $user->latitude = $validated['latitude'];
-        $user->longitude = $validated['longitude'];
-        $user->save();
-
-        return response()->json(['message' => 'تم تحديث الموقع بنجاح', 'data' => $user], 200);
-    }
-
 
     public function setPaymentMethod(string $modelId,string $id, Request $request)
     {
