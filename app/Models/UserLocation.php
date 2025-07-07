@@ -13,5 +13,9 @@ class UserLocation extends Model
         return $this->belongsTo(User::class);
     }
     protected $hidden = ['created_at', 'updated_at'];
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class, 'location_id');
+    }
 
 }

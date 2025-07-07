@@ -38,6 +38,10 @@ class User extends Authenticatable
     protected $hidden = [
         'created_at',
         'updated_at',
+        'email_verified_at',
+        'location',
+        'latitude',
+        'longitude',
         'password',
         'remember_token',
     ];

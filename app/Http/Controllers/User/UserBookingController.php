@@ -33,19 +33,12 @@ class UserBookingController extends Controller
         if ($request->additional_driver == true) {
 
             if ($request->has('location_id')) {
-                $location = $user->userLocations()->find($request->location_id);
+                $location = $user->userLocations()->find($validated['location_id']);
 
                 if (!$location) {
                     return response()->json(['message' => 'الموقع غير موجود'], 404);
                 }
 
-            }
-            elseif ($request->has('longitude') || $request->has('latitude')) {
-                $location =  $user->userLocations()->create([
-                    'longitude' => $validated['longitude'],
-                    'latitude' => $validated['latitude'],
-                    'location' => $validated['location'],
-                ]);
             }
              else {
                 return response()->json(['message' => 'يجب تحديد الموقع للمستخدم'], 422);
@@ -60,12 +53,17 @@ class UserBookingController extends Controller
             'carmodel_id' => $model->id,
             'additional_driver' => $request->additional_driver,
         ]);
-        return response()->json(['message' => 'تم إنشاء الحجز بنجاح',
+            if (isset($location)) {
+                $booking->location_id = $location->id;
+                $booking->save();
+                
+            }        
+            //  return response()->json(['location'=>$booking->location->is_active]);   
+            $booking->load(['location','user','carmodel','location']);
+
+            return response()->json(['message' => 'تم إنشاء الحجز بنجاح',
          'data' =>[
             'booking' => $booking,
-            'user' => $user,
-            'location' => isset($location) ? $location : null,
-            'model' => $model,
          ] 
         
         ], 201);

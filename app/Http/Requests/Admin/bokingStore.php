@@ -27,6 +27,8 @@ class bokingStore extends FormRequest
             'end_date' => 'required|date|after_or_equal:start_date',
             'status' => 'nullable|in:pending,confirmed,assigned,canceled,completed',
             'additional_driver' => 'required|boolean',
+            'location_id' =>'nullable|exists:user_locations,id',
+            'is_active' => 'nullable|boolean',
             'location' => 'nullable|string|max:255',
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
