@@ -13,14 +13,13 @@ class BookingController extends Controller
 {
     public function index()
     {
-        $bookings = Booking::with(['user', 'car', 'driver'])->latest()->get();
+        $bookings = Booking::with(['user','location','carmodel','car','driver'])->latest()->get();
         return response()->json(['data' => $bookings], 200);
     }
 
-//__________________________________________________________________________________________________________
     public function show($id)
     {
-        $booking = Booking::with(['user', 'car', 'driver'])->find($id);
+        $booking = Booking::with(['user','location','carmodel','car','driver'])->find($id);
 
         if (!$booking) {
             return response()->json(['message' => 'الحجز غير موجود'], 404);

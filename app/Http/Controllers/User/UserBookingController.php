@@ -59,7 +59,7 @@ class UserBookingController extends Controller
                 
             }        
             //  return response()->json(['location'=>$booking->location->is_active]);   
-            $booking->load(['location','user','carmodel','location']);
+            $booking->load(['user','location','carmodel','driver']);
 
             return response()->json(['message' => 'تم إنشاء الحجز بنجاح',
          'data' =>[
