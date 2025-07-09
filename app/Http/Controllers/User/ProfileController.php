@@ -86,7 +86,7 @@ class ProfileController extends Controller
     {
         $user = Auth::guard('user')->user();
 
-        $bookings = Booking::with(['car.carModel','carModel']) // eager load car and its model
+        $bookings = Booking::with(['car.carModel.modelName','carModel.modelName.type.brand']) // eager load car and its model
             ->where('user_id', $user->id)
             ->orderBy('created_at', 'desc')
             ->get();

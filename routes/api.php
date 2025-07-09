@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminBrandsController;
+use App\Http\Controllers\Admin\AdminModelNameController;
 use App\Http\Controllers\Admin\AdminsAuthController;
 use App\Http\Controllers\Admin\AdminTypesController;
 use Illuminate\Http\Request;
@@ -28,7 +29,9 @@ Route::middleware('admin')->prefix('/admin')->group(function () {
     Route::get('/Brands/{id}',[AdminBrandsController::class,'show']);   
     Route::post('/Brands',[AdminBrandsController::class,'store']);   
     Route::post('/Brands/{id}',[AdminBrandsController::class,'update']);   
-    Route::delete('/Brands/{id}',[AdminBrandsController::class,'destroy']); 
+    Route::delete('/Brands/{id}',[AdminBrandsController::class,'destroy']);
+    Route::post('/Brands/{id}/image', [AdminBrandsController::class, 'updateImage']);
+
     #Types  
     Route::get('/Brands/{brand}/Types',[AdminTypesController::class,'index']);   
     Route::get('/Brands/{brand}/Types/{id}',[AdminTypesController::class,'show']);   
@@ -36,12 +39,21 @@ Route::middleware('admin')->prefix('/admin')->group(function () {
     Route::post('/Brands/{brand}/Types/{id}',[AdminTypesController::class,'update']);   
     Route::delete('/Brands/{brand}/Types/{id}',[AdminTypesController::class,'destroy']);  
     
+    // Model Names CRUD (nested in brand & type)
+    Route::get('/Brands/{brandId}/Types/{typeId}/Model-Names', [AdminModelNameController::class, 'index']);
+    Route::post('/Brands/{brandId}/Types/{typeId}/Model-Names', [AdminModelNameController::class, 'store']);
+    Route::post('/Brands/{brandId}/Types/{typeId}/Model-Names/{id}', [AdminModelNameController::class, 'update']);
+    Route::delete('/Brands/{brandId}/Types/{typeId}/Model-Names/{id}', [AdminModelNameController::class, 'destroy']);
+    Route::get('/Brands/{brandId}/Types/{typeId}/Model-Names/{id}', [AdminModelNameController::class, 'show']);
+
     // Models CRUD (nested in brand & type)
-    Route::get('/Brands/{brandId}/Types/{typeId}/Models', [ModelController::class, 'index']);
-    Route::post('/Brands/{brandId}/Types/{typeId}/Models', [ModelController::class, 'store']);
-    Route::post('/Brands/{brandId}/Types/{typeId}/Models/{id}', [ModelController::class, 'update']);
-    Route::delete('/Brands/{brandId}/Types/{typeId}/Models/{id}', [ModelController::class, 'destroy']);
-    Route::get('/Brands/{brandId}/Types/{typeId}/Models/{id}', [ModelController::class, 'show']);
+    Route::get('/Brands/{brandId}/Types/{typeId}/Model-Names/{modelNameId}/Models', [ModelController::class, 'index']);
+    Route::post('/Brands/{brandId}/Types/{typeId}/Model-Names/{modelNameId}/Models', [ModelController::class, 'store']);
+    Route::post('/Brands/{brandId}/Types/{typeId}/Model-Names/{modelNameId}/Models/{id}', [ModelController::class, 'update']);
+    Route::delete('/Brands/{brandId}/Types/{typeId}/Model-Names/{modelNameId}/Models/{id}', [ModelController::class, 'destroy']);
+    Route::get('/Brands/{brandId}/Types/{typeId}/Model-Names/{modelNameId}/Models/{id}', [ModelController::class, 'show']);
+
+    Route::post('/Models/{id}/image', [ModelController::class, 'updateImage']);
 
     //Booking
     Route::get('/Booking', [BookingController::class, 'index']); 

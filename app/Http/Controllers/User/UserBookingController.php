@@ -14,7 +14,7 @@ class UserBookingController extends Controller
     public function carBooking(string $id, bokingStore $request)
     {
         // return response()->json($request->all());
-        $model = CarModel::find($id);
+        $model = CarModel::with('modelName.type.brand')->find($id);
         if (!$model) {
             return response()->json(['message' => 'الموديل غير موجود'], 404);
         }
@@ -57,13 +57,13 @@ class UserBookingController extends Controller
                 
             }        
             //  return response()->json(['location'=>$booking->location->is_active]);   
-            $booking->load(['user','location','carmodel','driver']);
+            $booking->load(['user','location','carmodel.modelName.type.brand','driver']);
 
             return response()->json(['message' => 'تم إنشاء الحجز بنجاح',
          'data' =>[
             'booking' => $booking,
-         ] 
-        
+         ]
+
         ], 201);
     }
 

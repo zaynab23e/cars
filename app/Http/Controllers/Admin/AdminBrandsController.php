@@ -15,8 +15,39 @@ use Illuminate\Validation\Rule;
 class AdminBrandsController extends Controller
 {
     use HttpResponses;
-    
 
+public function updateImage(string $brandId, Request $request)
+{
+    $brand = Brand::find($brandId);
+    $request->validate([
+        'logo' => 'required|image|max:2048',
+    ]);
+
+    if ($request->hasFile('logo')) {
+
+        $file = $request->file('logo');
+        $filename = time() . '.' . $file->getClientOriginalExtension();
+
+        // نحفظ الصورة في نفس المجلد زي store()
+        $file->move(public_path('brands'), $filename);
+
+        // نسجل نفس المسار زي ما في store
+        $brand->logo = 'brands/' . $filename;
+    }
+    
+    if (!$brand->save()) {
+        return response()->json([
+            'status' => 'Error has occurred...',
+            'message' => 'brand update failed',
+            'data' => null
+        ], 500);
+    }
+
+    return response()->json([
+        'message' => 'تم تعديل الصورة بنجاح',
+        'data' => $brand
+    ]);
+}
     public function index()
     {
         $brands = Brand::with('types')->get(); // Assuming you have a MenuCategory model

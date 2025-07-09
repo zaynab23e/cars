@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class BrandsResource extends JsonResource
+class ModelNameResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -18,11 +18,22 @@ class BrandsResource extends JsonResource
             'id' => (string)$this->id,
             'attributes' =>[
                 'name' =>$this->name,
-                'logo' => $this->logo  ? asset($this->logo) : null
+
             ],
             'relationship' => [
-                'Types' => TypesResource::collection($this->types),
+                'Types' => [
+                    'type_id' => (string)$this->type->id,
+                    'type_name' => $this->type->name,
+                ],
+                'Brand' => [
+                    'brand_id' => $this->type->brand->id,
+
+                    'brand_name' => $this->type->brand->name,
+                ],
+
             ]
+
         ];
+    
     }
 }

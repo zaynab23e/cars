@@ -15,9 +15,9 @@ class Type extends Model
         return $this->belongsTo(Brand::class);
 
     }
-    public function carModels() 
+    public function modelNames() 
     {
-        return $this->hasMany(CarModel::class);
+        return $this->hasMany(ModelName::class);
 
     }
 }

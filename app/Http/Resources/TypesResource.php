@@ -23,7 +23,7 @@ class TypesResource extends JsonResource
             ],
             'relationship' => [
                 'Brands' => $this->brand,
-                'Models' => $this->carModels,
+                'Model Names' => $this->modelNames,
             ]
         ];
     }

@@ -18,23 +18,27 @@ class HomePageController extends Controller
     public function index(Request $request)
     {
         // return response()->json(['request'=>$request->all()]);
-        $query = CarModel::with('type.brand')->select('id', 'name', 'year', 'price', 'engine_type', 'transmission_type', 'seat_type', 'seats_count', 'acceleration', 'image', 'type_id');
+        $query = CarModel::with('modelName.type.brand')->select('id', 'year', 'price', 'engine_type', 'transmission_type', 'seat_type', 'seats_count', 'acceleration', 'image', 'model_name_id');
 
         if ($request->has('brand') && $request->brand !== null) {
-        $query->whereHas('type.brand', function ($q) use ($request) {
+        $query->whereHas('modelName.type.brand', function ($q) use ($request) {
             $q->where('name', 'like', '%' . $request->brand . '%');
         });
         }
         if ($request->has('type') && $request->type !== null) {
-            $query->whereHas('type', function ($q) use ($request) {
+            $query->whereHas('modelName.type', function ($q) use ($request) {
                 $q->where('name', 'like', '%' . $request->type . '%');
             });
         }
         
         if ($request->has('model') && $request->model !== null) {
-            $query->where('name', 'like', '%' . $request->model . '%');
-            
+            $query->whereHas('modelName', function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->model . '%');
+            });
         }
+        if ($request->has('year')) {
+            $query->where('year', $request->year);
+        }        
         if ($request->has('min_price') && is_numeric($request->min_price)) {
             $query->where('price', '>=', $request->min_price);
         }
@@ -50,11 +54,12 @@ class HomePageController extends Controller
     }
     public function show($id)
     {
-        $model = CarModel::with('type.brand')->select('id', 'name', 'year', 'price', 'engine_type', 'transmission_type', 'seat_type', 'seats_count', 'acceleration', 'image', 'type_id')->find($id);
+        $model = CarModel::with('modelName.type.brand')->select('id', 'year', 'price', 'engine_type', 'transmission_type', 'seat_type', 'seats_count', 'acceleration', 'image', 'model_name_id')->find($id);
+        //  return response()->json(['request'=>$model]);
         if (!$model) {
             return response()->json(['message' => 'الموديل غير موجود'], 404);
         }
-        if (!$model->type->brand) {
+        if (!$model->modelName->type->brand) {
             return response()->json(['message' => 'الموديل لا ينتمي لهذا النوع أو البراند'], 403);
         }
 

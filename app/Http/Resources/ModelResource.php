@@ -17,7 +17,6 @@ class ModelResource extends JsonResource
         return [
             'id' => (string)$this->id,
             'attributes' =>[
-                'name' =>$this->name,
                 'year' =>$this->year,
                 'price' =>$this->price,
                 'engine_type' => $this->engine_type,
@@ -29,20 +28,20 @@ class ModelResource extends JsonResource
 
             ],
             'relationship' => [
+                'Model Names' => [
+                    'model_name_id' => (string)$this->modelName->id,
+                    'model_name' => $this->modelName->name,
+                ],
                 'Types' => [
-                    'type_id' => (string)$this->type->id,
-                    'type_name' => $this->type->name,
+                    'type_id' => (string)$this->modelName->type->id,
+                    'type_name' => $this->modelName->type->name,
                 ],
                 'Brand' => [
-                    'brand_id' => $this->type->brand->id,
+                    'brand_id' => $this->modelName->type->brand->id,
 
-                    'brand_name' => $this->type->brand->name,],
+                    'brand_name' => $this->modelName->type->brand->name,
+                ],
 
-            // ] 
-
-            //         'brand_name' => $this->type->brand->name,
-            //         // 'brand_image' => $this->type->brand->logo,                
-            //     ],
             ]
 
         ];
