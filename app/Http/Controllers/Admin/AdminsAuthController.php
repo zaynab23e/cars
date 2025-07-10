@@ -12,31 +12,30 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class AdminsAuthController extends Controller
-{  
-    use HttpResponses;  
+{
+    use HttpResponses;
+
     // Admin login
     public function login(LoginAdminRequest $request)
     {
-        
         $admin = Admin::where('email', $request->email)->first();
-    
+
         // Check if admin exists and verify password manually
         if (!$admin || !Hash::check($request->password, $admin->password)) {
-            return $this->error('', 'Invalid credentials', 401);
+            return $this->error('', trans('messages.invalid_credentials'), 401);
         }
-    
+
         return $this->success([
             'admin' => $admin,
             'token' => $admin->createToken('Access Token for ' . $admin->name)->plainTextToken,
         ]);
     }
-    
 
     // Register new admin (only if no admin exists)
     public function register(StoreAdminRequest $request)
     {
         if (Admin::count() > 0) {
-            return response()->json(['message' => 'An admin is already registered.'], 403);
+            return response()->json(['message' => trans('messages.admin_already_registered')], 403);
         }
 
         $admin = Admin::create($request->validated());
@@ -44,18 +43,18 @@ class AdminsAuthController extends Controller
         return $this->success([
             'admin' => $admin,
             'token' => $admin->createToken('admin-token')->plainTextToken,
-        ], 'Admin registered successfully!', 201);
+        ], trans('messages.admin_registered_successfully'), 201);
     }
 
-        // Admin logout
+    // Admin logout
     public function logout(Request $request)
     {
         $admin = Auth::guard('admin')->user(); // Use the admin guard
 
         if (!$admin) {
             return response()->json([
-                'status' => 'Error has occurred...',
-                'message' => 'Unauthorized access. Admins only.',
+                'status' => trans('messages.error_occurred'),
+                'message' => trans('messages.unauthorized_admin'),
                 'data' => ''
             ], 403);
         }
@@ -64,8 +63,8 @@ class AdminsAuthController extends Controller
         $admin->currentAccessToken()?->delete(); // Safe way to delete token
 
         return response()->json([
-            'status' => 'Success',
-            'message' => 'Logged out successfully',
+            'status' => trans('messages.success'),
+            'message' => trans('messages.logout_successfully'),
             'data' => ''
         ]);
     }

@@ -15,13 +15,11 @@ class AuthController extends Controller
     public function register(Register $request)
     {
         $validatedData = $request->validated();
-
         $validatedData['password'] = Hash::make($validatedData['password']);
-
         $admin = Admin::create($validatedData);
 
         return response()->json([
-            'message' => 'Admin registered successfully.',
+            'message' => trans('messages.admin_registered'),
             'admin' => $admin,
         ], 201);
     }
@@ -29,26 +27,22 @@ class AuthController extends Controller
     public function login(Login $request)
     {
         $credentials = $request->validated();
-
-    
         $admin = Admin::where('email', $credentials['email'])->first();
 
         if (! $admin || ! Hash::check($credentials['password'], $admin->password)) {
             return response()->json([
-                'message' => 'Invalid credentials',
+                'message' => trans('messages.invalid_credentials'),
             ], 401);
         }
 
-    
         $token = $admin->createToken('admin-token')->plainTextToken;
 
         return response()->json([
-            'message' => 'Login successful',
+            'message' => trans('messages.login_success'),
             'admin' => $admin,
             'token' => $token,
         ]);
     }
-
 
     public function logout(Request $request)
     {
@@ -56,9 +50,9 @@ class AuthController extends Controller
 
         if ($admin) {
             $admin->tokens()->delete();
-            return response()->json(['message' => 'Logged out successfully']);
+            return response()->json(['message' => trans('messages.logout_success')]);
         }
 
-        return response()->json(['message' => 'No admin logged in'], 401);
+        return response()->json(['message' => trans('messages.no_admin_logged_in')], 401);
     }
 }

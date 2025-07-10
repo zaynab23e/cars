@@ -22,7 +22,7 @@ class BookingController extends Controller
         $booking = Booking::with(['user','location','carmodel.modelName.type.brand','car','driver'])->find($id);
 
         if (!$booking) {
-            return response()->json(['message' => 'الحجز غير موجود'], 404);
+        return response()->json(['message' => __('messages.booking_not_found')], 404);
         }
 
         return response()->json(['data' => $booking], 200);
@@ -34,12 +34,12 @@ public function destroy($id)
     $booking = Booking::find($id);
     
     if (!$booking) {
-        return response()->json(['message' => 'الحجز غير موجود'], 404);
+   return response()->json(['message' => __('messages.booking_not_found')], 404);
     }
     
     $booking->delete();
     
-    return response()->json(['message' => 'تم حذف الحجز بنجاح'], 200);
+     return response()->json(['message' => __('messages.booking_deleted')], 200);
 }
 //______________________________________________________________________________________________________
 public function assignDriver(Request $request, $id)
@@ -47,7 +47,7 @@ public function assignDriver(Request $request, $id)
     $booking = Booking::with(['user','location','carmodel.modelName.type.brand','car','driver'])->find($id);
 
     if (!$booking) {
-        return response()->json(['message' => 'الحجز غير موجود'], 404);
+    return response()->json(['message' => __('messages.booking_not_found')], 404);
     }
     
     // $request->validate([
@@ -58,7 +58,7 @@ public function assignDriver(Request $request, $id)
     $booking->status = 'assigned';
     $booking->save();
     
-    return response()->json(['message' => 'تم تعيين السائق بنجاح', 'data' => $booking], 200);
+      return response()->json(['message' => __('messages.driver_assigned'), 'data' => $booking], 200);
 }
 //________________________________________________________________________________________________________
 
@@ -67,7 +67,7 @@ public function changeStatus(Request $request, $id)
     $booking = Booking::with(['user','location','carmodel.modelName.type.brand','car','driver'])->find($id);
 
     if (!$booking) {
-        return response()->json(['message' => 'الحجز غير موجود'], 404);
+      return response()->json(['message' => __('messages.booking_not_found')], 404);
     }
     
     $request->validate([
@@ -76,6 +76,6 @@ public function changeStatus(Request $request, $id)
     $booking->status = $request->status;
     $booking->save();
     
-    return response()->json(['message' => 'تم تحديث حالة الحجز بنجاح', 'data' => $booking], 200);
+    return response()->json(['message' => __('messages.status_updated'), 'data' => $booking], 200);
 }
 }

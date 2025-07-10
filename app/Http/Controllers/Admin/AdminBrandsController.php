@@ -8,169 +8,147 @@ use App\Http\Resources\BrandsResource;
 use App\Models\Brand;
 use App\Traits\HttpResponses;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule;
-
 
 class AdminBrandsController extends Controller
 {
     use HttpResponses;
 
-public function updateImage(string $brandId, Request $request)
-{
-    $brand = Brand::find($brandId);
-    $request->validate([
-        'logo' => 'required|image|max:2048',
-    ]);
+    public function updateImage(string $brandId, Request $request)
+    {
+        $brand = Brand::find($brandId);
+        $request->validate([
+            'logo' => 'required|image|max:2048',
+        ]);
 
-    if ($request->hasFile('logo')) {
+        if ($request->hasFile('logo')) {
+            $file = $request->file('logo');
+            $filename = time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('brands'), $filename);
+            $brand->logo = 'brands/' . $filename;
+        }
 
-        $file = $request->file('logo');
-        $filename = time() . '.' . $file->getClientOriginalExtension();
+        if (!$brand->save()) {
+            return response()->json([
+                'status' => __('messages.error_occurred'),
+                'message' => __('messages.brand_update_failed'),
+                'data' => null
+            ], 500);
+        }
 
-        // نحفظ الصورة في نفس المجلد زي store()
-        $file->move(public_path('brands'), $filename);
-
-        // نسجل نفس المسار زي ما في store
-        $brand->logo = 'brands/' . $filename;
-    }
-    
-    if (!$brand->save()) {
         return response()->json([
-            'status' => 'Error has occurred...',
-            'message' => 'brand update failed',
-            'data' => null
-        ], 500);
+            'message' => __('messages.image_updated_successfully'),
+            'data' => $brand
+        ]);
     }
 
-    return response()->json([
-        'message' => 'تم تعديل الصورة بنجاح',
-        'data' => $brand
-    ]);
-}
     public function index()
     {
-        $brands = Brand::with('types')->get(); // Assuming you have a MenuCategory model
-
+        $brands = Brand::with('types')->get();
         return BrandsResource::collection($brands);
     }
 
     public function store(Request $request)
     {
         $filename = null;
-        // Store the Brand in the database
+
         $request->validate([
             'name' => 'required|string|max:255',
             "logo" => 'required|image|max:2048'
         ]);
-            if ($request->hasFile('logo')) {
-            $file = $request->file('logo'); // You have an UploadedFile instance
+
+        if ($request->hasFile('logo')) {
+            $file = $request->file('logo');
             $filename = time() . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('brands'), $filename);
-
 
             $brand = Brand::create([
                 'name' => $request->name,
                 'logo' => $filename ? 'brands/' . $filename : null,
             ]);
         }
+
         if (!$brand) {
             return response()->json([
-                'status' => 'Error has occurred...',
-                'message' => 'Brand created failed',
+                'status' => __('messages.error_occurred'),
+                'message' => __('messages.brand_create_failed'),
                 'data' => ''
             ], 500);
         }
+
         $brand = new BrandsResource($brand);
-        return $this->success($brand,'Brand created successfully',201);    }
+        return $this->success($brand, __('messages.brand_created_successfully'), 201);
+    }
 
     public function update(Request $request, $id)
     {
-        // return response($request);
-        // Logic to update a Brand
         $brand = Brand::find($id);
         if (!$brand) {
             return response()->json([
-                'status' => 'Error has occurred...',
-                'message' => 'There is no Brand with this id',
+                'status' => __('messages.error_occurred'),
+                'message' => __('messages.brand_not_found'),
                 'data' => ''
             ], 500);
-        }        
+        }
+
         $request->validate([
             'name' => 'required|string|max:255|unique:brands,name,' . $brand->id,
             "logo" => 'required|image|max:2048'
-        ]);  
-            if ($request->hasFile('logo')) {
-                // حذف الصورة القديمة لو موجودة
-                if ($brand->logo && file_exists(public_path($brand->logo))) {
-                    unlink(public_path($brand->logo));
-                }
-        
-                $file = $request->file('logo');
-                $filename = time() . '.' . $file->getClientOriginalExtension();
-        
-                // نحفظ الصورة في نفس المجلد زي store()
-                $file->move(public_path('brands'), $filename);
-        
-                // نسجل نفس المسار زي ما في store
-                $brand->logo = 'brands/' . $filename;
+        ]);
+
+        if ($request->hasFile('logo')) {
+            if ($brand->logo && file_exists(public_path($brand->logo))) {
+                unlink(public_path($brand->logo));
             }
-            
-            $brand->name =$request->name;
-        // Find the Brand and update it
-        //     if ($request->hasFile('logo')) {
-        //     $file = $request->file('logo'); // You have an UploadedFile instance
-        //     $filename = time() . '.' . $file->getClientOriginalExtension();
 
-        //     $filename = $file->store('brands', 'public');
+            $file = $request->file('logo');
+            $filename = time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('brands'), $filename);
+            $brand->logo = 'brands/' . $filename;
+        }
 
-        //     $brand->update([
-        //         'name' => $request->name,
-        //         'logo' => $filename,
-        //     ]);
-        // }
+        $brand->name = $request->name;
+
         if (!$brand->save()) {
             return response()->json([
-                'status' => 'Error has occurred...',
-                'message' => 'Brand updated failed',
+                'status' => __('messages.error_occurred'),
+                'message' => __('messages.brand_update_failed'),
                 'data' => ''
             ], 500);
-        }        
-        // $brand->update($request->validated());
+        }
 
         return response()->json([
-                'message' => 'Brand Updated Successfully',
-                'data' => $brand            
+            'message' => __('messages.brand_updated_successfully'),
+            'data' => $brand
         ]);
     }
+
     public function destroy($id)
     {
-        // Logic to delete a Brand
         $brand = Brand::find($id);
         if (!$brand) {
             return response()->json([
-                'status' => 'Error has occurred...',
-                'message' => 'There is no Brand with this id',
+                'status' => __('messages.error_occurred'),
+                'message' => __('messages.brand_not_found'),
                 'data' => ''
             ], 500);
         }
 
         $brand->delete();
 
-        return $this->success('','Brand deleted successfully.');
+        return $this->success('', __('messages.brand_deleted_successfully'));
     }
+
     public function show($id)
     {
-        // Logic to display a single Brand
         $brand = Brand::find($id);
         if (!$brand) {
             return response()->json([
-                'status' => 'Error has occurred...',
-                'message' => 'There is no Brand with this id',
+                'status' => __('messages.error_occurred'),
+                'message' => __('messages.brand_not_found'),
                 'data' => ''
             ], 500);
-        }  
+        }
+
         return new BrandsResource($brand);
     }
-
 }

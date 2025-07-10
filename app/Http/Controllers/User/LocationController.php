@@ -12,29 +12,30 @@ class LocationController extends Controller
     {
         $user = Auth::guard('user')->user();
         if (!$user) {
-            return response()->json(['message' => 'المستخدم غير مصرح له'], 403);
+            return response()->json(['message' => __('messages.unauthorized_user')], 403);
         }
 
         $locations = $user->userLocations()->get();
         if (!$locations) {
-            return response()->json(['message' => 'لا يوجد موقع للمستخدم'], 404);
+             return response()->json(['message' => __('messages.no_user_locations')], 404);
         }
 
-        return response()->json(['message' => 'تم استرجاع الموقع بنجاح', 'data' => $locations], 200);
+        return response()->json(['message' =>  __('messages.location_added'), 'data' => $locations], 200);
+       
     }
     public function getUserActiveLocation()
     {
         $user = Auth::guard('user')->user();
         if (!$user) {
-            return response()->json(['message' => 'المستخدم غير مصرح له'], 403);
+            return response()->json(['message' => __('messages.unauthorized_user')], 403);
         }
 
         $activeLocation = $user->userLocations()->where('is_active', true)->first();
         if (!$activeLocation) {
-            return response()->json(['message' => 'لا يوجد موقع نشط للمستخدم'], 404);
+             return response()->json(['message' => __('messages.no_user_locations')], 404);
         }
 
-        return response()->json(['message' => 'تم استرجاع الموقع النشط بنجاح', 'data' => $activeLocation], 200);
+        return response()->json(['message' => __('messages.location_retrieved'), 'data' => $activeLocation], 200);
     }
 
 
@@ -51,7 +52,7 @@ public function setUserLocation(Request $request)
     $user = Auth::guard('user')->user();
 
     if (!$user) {
-        return response()->json(['message' => 'المستخدم غير مصرح له'], 403);
+        return response()->json(['message' => __('messages.unauthorized_user')], 403);
     }
 
     $locationsCount = $user->userLocations()->count();
@@ -73,7 +74,8 @@ public function setUserLocation(Request $request)
         'is_active' => $validated['is_active'],
     ]);
 
-    return response()->json(['message' => 'تم إضافة الموقع بنجاح'], 200);
+   return response()->json(['message' => __('messages.location_added')], 200);
+
 }
 
 //___________________________________________________________________________
@@ -88,14 +90,14 @@ public function setUserLocation(Request $request)
 
         $user = Auth::guard('user')->user();
         if (!$user) {
-            return response()->json(['message' => 'المستخدم غير مصرح له'], 403);
+           return response()->json(['message' => __('messages.unauthorized_user')], 403);
         }
         
         
         $location = $user->userLocations()->find($id);
     
         if (!$location) {
-            return response()->json(['message' => 'الموقع غير موجود'], 404);
+   return response()->json(['message' => __('messages.no_user_locations')], 404);
         }
 
 
@@ -105,6 +107,8 @@ public function setUserLocation(Request $request)
 
         $location->update($validated);
 
-        return response()->json(['message' => 'تم تحديث الموقع بنجاح', 'data' => $location], 200);
+        return response()->json(['message' => __('messages.location_added'), 'data' => $location], 200);
+    
+
     }
 }

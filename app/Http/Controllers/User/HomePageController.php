@@ -4,9 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\bokingStore;
-use App\Http\Resources\BrandsResource;
 use App\Http\Resources\ModelResource;
-use App\Models\Booking;
 use App\Models\Brand;
 use App\Models\CarModel;
 use App\Models\Type;
@@ -17,66 +15,69 @@ class HomePageController extends Controller
 {
     public function index(Request $request)
     {
-        // return response()->json(['request'=>$request->all()]);
-        $query = CarModel::with('modelName.type.brand')->select('id', 'year', 'price', 'engine_type', 'transmission_type', 'seat_type', 'seats_count', 'acceleration', 'image', 'model_name_id');
+        $query = CarModel::with('modelName.type.brand')
+            ->select('id', 'year', 'price', 'engine_type', 'transmission_type', 'seat_type', 'seats_count', 'acceleration', 'image', 'model_name_id');
 
-        if ($request->has('brand') && $request->brand !== null) {
-        $query->whereHas('modelName.type.brand', function ($q) use ($request) {
-            $q->where('name', 'like', '%' . $request->brand . '%');
-        });
+        if ($request->filled('brand')) {
+            $query->whereHas('modelName.type.brand', fn($q) => 
+                $q->where('name', 'like', '%' . $request->brand . '%'));
         }
-        if ($request->has('type') && $request->type !== null) {
-            $query->whereHas('modelName.type', function ($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->type . '%');
-            });
+
+        if ($request->filled('type')) {
+            $query->whereHas('modelName.type', fn($q) => 
+                $q->where('name', 'like', '%' . $request->type . '%'));
         }
-        
-        if ($request->has('model') && $request->model !== null) {
-            $query->whereHas('modelName', function ($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->model . '%');
-            });
+
+        if ($request->filled('model')) {
+            $query->whereHas('modelName', fn($q) => 
+                $q->where('name', 'like', '%' . $request->model . '%'));
         }
+
         if ($request->has('year')) {
             $query->where('year', $request->year);
-        }        
-        if ($request->has('min_price') && is_numeric($request->min_price)) {
+        }
+
+        if (is_numeric($request->min_price)) {
             $query->where('price', '>=', $request->min_price);
         }
 
-        if ($request->has('max_price') && is_numeric($request->max_price)) {
+        if (is_numeric($request->max_price)) {
             $query->where('price', '<=', $request->max_price);
         }
-
 
         $models = $query->paginate(10);
 
         return ModelResource::collection($models);
     }
+
     public function show($id)
     {
-        $model = CarModel::with('modelName.type.brand')->select('id', 'year', 'price', 'engine_type', 'transmission_type', 'seat_type', 'seats_count', 'acceleration', 'image', 'model_name_id')->find($id);
-        //  return response()->json(['request'=>$model]);
+        $model = CarModel::with('modelName.type.brand')
+            ->select('id', 'year', 'price', 'engine_type', 'transmission_type', 'seat_type', 'seats_count', 'acceleration', 'image', 'model_name_id')
+            ->find($id);
+
         if (!$model) {
-            return response()->json(['message' => 'الموديل غير موجود'], 404);
+            return response()->json(['message' => __('messages.model_not_found')], 404);
         }
-        if (!$model->modelName->type->brand) {
-            return response()->json(['message' => 'الموديل لا ينتمي لهذا النوع أو البراند'], 403);
+
+        if (!$model->modelName || !$model->modelName->type || !$model->modelName->type->brand) {
+            return response()->json(['message' => __('messages.model_not_belonging')], 403);
         }
 
         return new ModelResource($model);
     }
+
     public function filterInfo()
     {
         $brands = Brand::get(['id', 'name', 'logo'])
-            ->map(function ($brand) {
-                return [
-                    'id' => (string) $brand->id,
-                    'attributes' => [
-                        'name' => $brand->name,
-                        'logo' => $brand->logo ? asset($brand->logo) : null,
-                    ],
-                ];
-            });
+            ->map(fn($brand) => [
+                'id' => (string) $brand->id,
+                'attributes' => [
+                    'name' => $brand->name,
+                    'logo' => $brand->logo ? asset($brand->logo) : null,
+                ],
+            ]);
+
         $types = Type::pluck('name')
             ->map(fn($type) => strtolower($type))
             ->unique()
@@ -94,5 +95,5 @@ class HomePageController extends Controller
         ]);
     }
 
-/////////////////////////Sales////////////////////////
+    /////////////////////////Sales////////////////////////
 }
