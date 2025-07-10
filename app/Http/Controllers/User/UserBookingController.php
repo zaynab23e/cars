@@ -33,7 +33,7 @@ class UserBookingController extends Controller
             ]);
 
             if ($request->has('location_id')) {
-                $location = $user->userLocations()->find($validated['location_id']);
+                $location = $user->userLocations()->find($request->location_id);
 
                 if (!$location) {
                     return response()->json(['message' => 'الموقع غير موجود'], 404);
