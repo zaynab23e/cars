@@ -50,11 +50,11 @@ public function assignDriver(Request $request, $id)
         return response()->json(['message' => 'الحجز غير موجود'], 404);
     }
     
-    $request->validate([
-        'driver_id' => 'required|exists:drivers,id',
-    ]);
+    // $request->validate([
+    //     'driver_id' => 'required|exists:drivers,id',
+    // ]);
     
-    $booking->driver_id = $request->driver_id;
+    // $booking->driver_id = $request->driver_id;
     $booking->status = 'assigned';
     $booking->save();
     
