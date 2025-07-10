@@ -28,6 +28,9 @@ class UserBookingController extends Controller
         $validated = $request->validated();
         
         if ($request->additional_driver == true) {
+            $request->validate([
+                'location_id' => 'required|exists:user_locations,id',
+            ]);
 
             if ($request->has('location_id')) {
                 $location = $user->userLocations()->find($validated['location_id']);
