@@ -8,6 +8,8 @@ use App\Models\Car;
 use App\Models\CarModel;
 use App\Models\Image;
 use App\Http\Resources\ModelResource;
+use App\Models\ModelName;
+use App\Models\Type;
 
 class CarController extends Controller
 {
@@ -19,14 +21,16 @@ class CarController extends Controller
     }
 
     //_____________________________________________________________________________________________
-public function store(Request $request, $brandId, $typeId, $modelId)
+public function store(Request $request,string $modelNameId , $modelId)
 {
-    $model = CarModel::where('id', $modelId)
-        ->where('type_id', $typeId)
-        ->firstOrFail();
-
+    $model = CarModel::with('modelName.type.brand')
+        ->where('id', $modelId)
+        ->whereHas('modelName', function ($query) use ($modelNameId) {
+            $query->where('id', $modelNameId);
+        })
+        ->first();
     if (!$model) {
-        return response()->json(['message' => 'الموديل غير موجود أو غير مرتبط بنوع/براند صالح'], 404);
+        return response()->json(['message' => 'الموديل غير موجود أو غير مرتبط بالنوع'], 404);
     }
 
     $request->validate([

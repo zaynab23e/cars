@@ -108,7 +108,7 @@ public function bookingList()
             'status'   => $booking->status,
             'final_price'   => $booking->final_price,
             'car_model_year' => optional($booking->carModel)->year,
-            'car_model_image' => optional($booking->carModel)->image,
+            'car_model_image' => asset(optional($booking->carModel)->image),
             'car_model_id' => optional($booking->carModel)->id,
             'model_name'     => optional(optional($booking->carModel)->modelName)->name,
             'brand_name'     => optional(optional(optional($booking->carModel)->modelName)->type->brand)->name,

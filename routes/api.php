@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\ModelController;
 use App\Http\Controllers\Admin\BookingController;
 use App\Http\Controllers\User\UserBookingController;
 use App\Http\Controllers\Admin\CarController;
+use App\Http\Controllers\Sales\SalesBookingController;
 use App\Http\Controllers\User\HomePageController;
 use App\Http\Controllers\User\LocationController;
 use App\Http\Controllers\User\ProfileController;
@@ -52,9 +53,15 @@ Route::middleware('admin')->prefix('/admin')->group(function () {
     Route::post('/Brands/{brandId}/Types/{typeId}/Model-Names/{modelNameId}/Models/{id}', [ModelController::class, 'update']);
     Route::delete('/Brands/{brandId}/Types/{typeId}/Model-Names/{modelNameId}/Models/{id}', [ModelController::class, 'destroy']);
     Route::get('/Brands/{brandId}/Types/{typeId}/Model-Names/{modelNameId}/Models/{id}', [ModelController::class, 'show']);
-
     Route::post('/Models/{id}/image', [ModelController::class, 'updateImage']);
 
+    //cars
+    Route::get('/Model-Names/{modelNameId}/Models/{modelId}/Cars', [CarController::class, 'index']);
+    Route::post('/Model-Names/{modelNameId}/Models/{modelId}/Cars', [CarController::class, 'store']);
+    Route::get('/Model-Names/{modelNameId}/Models/{modelId}/Cars/{car}', [CarController::class, 'show']);
+    Route::post('/Model-Names/{modelNameId}/Models/{modelId}/Cars/{car}', [CarController::class, 'update']); 
+    Route::delete('/Model-Names/{modelNameId}/Models/{modelId}/Cars/{car}', [CarController::class, 'destroy']);
+    
     //Booking
     Route::get('/Booking', [BookingController::class, 'index']); 
     Route::post('/Booking', [BookingController::class, 'store']); 
@@ -63,13 +70,6 @@ Route::middleware('admin')->prefix('/admin')->group(function () {
     Route::delete('/Booking/{id}', [BookingController::class, 'destroy']); 
 
 
-    //car
-    Route::get('Brands/{brandId}/Types/{typeId}/Models/{modelId}/Cars', [CarController::class, 'index']);
-    Route::post('Brands/{brandId}/Types/{typeId}/Models/{modelId}/Cars', [CarController::class, 'store']);
-    Route::get('Brands/{brandId}/Types/{typeId}/Models/{modelId}/Cars/{car}', [CarController::class, 'show']);
-    Route::post('Brands/{brandId}/Types/{typeId}/Models/{modelId}/Cars/{car}', [CarController::class, 'update']); 
-    Route::delete('Brands/{brandId}/Types/{typeId}/Models/{modelId}/Cars/{car}', [CarController::class, 'destroy']);
-    
     //    Route::get('/Brands/{brandId}/Types/{typeId}/Models/{modelId}/Car', [ModelController::class, 'index']);
     
 });
@@ -106,15 +106,31 @@ Route::middleware('user')->prefix('/user')->group(function () {
     Route::get('/user-profile', [ProfileController::class, 'userProfile']);    
     Route::get('/booking-list', [ProfileController::class, 'bookingList']);
 
-/////////////////////////Sales/////////////////////////
-    Route::post('/Booking/{id}/assign-driver', [BookingController::class, 'assignDriver']);
-    Route::post('/Booking/{id}/change-status', [BookingController::class, 'changeStatus']);
-//////////////////////////////////////////////////////
-
-
-
-
+    
+    
+    
+    
     Route::post('logout', [UserAuthController::class, 'logout']);
 });
 
 
+
+/////////////////////////Sales/////////////////////////
+
+
+Route::prefix('/sales')->group(function () {
+    Route::get('/Confirmed-Booking', [SalesBookingController::class, 'ConfirmedBooking']);
+
+    Route::get('/Completed-Booking', [SalesBookingController::class, 'CompletedBooking']);
+
+    Route::get('/Assigned-Booking', [SalesBookingController::class, 'AssignedBooking']);
+
+    Route::get('/Canceled-Booking', [SalesBookingController::class, 'CanceledBooking']);
+
+    Route::get('/Booking/{id}/Cars', [SalesBookingController::class, 'getCars']);
+    Route::post('/Booking/{bookingId}/Assign-Car/{carId}', [SalesBookingController::class, 'assignCar']);
+
+    // Route::get('/Booking/{id}', [SalesBookingController::class, 'show']);
+    Route::delete('/Booking/{id}', [SalesBookingController::class, 'destroy']);
+});
+//////////////////////////////////////////////////////

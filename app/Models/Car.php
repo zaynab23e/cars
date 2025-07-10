@@ -12,7 +12,7 @@ class Car extends Model
   
   public function carModel()
   {
-    return $this->belongsTo(CarModel::class);
+    return $this->belongsTo(CarModel::class, 'carmodel_id');
   }
   public function bookings()
   {
