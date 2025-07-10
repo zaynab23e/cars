@@ -13,13 +13,13 @@ class BookingController extends Controller
 {
     public function index()
     {
-        $bookings = Booking::with(['user','location','carmodel','car','driver'])->latest()->get();
+        $bookings = Booking::with(['user','location','carmodel.modelName.type.brand','car','driver'])->latest()->get();
         return response()->json(['data' => $bookings], 200);
     }
 
     public function show($id)
     {
-        $booking = Booking::with(['user','location','carmodel','car','driver'])->find($id);
+        $booking = Booking::with(['user','location','carmodel.modelName.type.brand','car','driver'])->find($id);
 
         if (!$booking) {
             return response()->json(['message' => 'الحجز غير موجود'], 404);
@@ -44,8 +44,8 @@ public function destroy($id)
 //______________________________________________________________________________________________________
 public function assignDriver(Request $request, $id)
 {
-    $booking = Booking::find($id);
-    
+    $booking = Booking::with(['user','location','carmodel.modelName.type.brand','car','driver'])->find($id);
+
     if (!$booking) {
         return response()->json(['message' => 'الحجز غير موجود'], 404);
     }
@@ -64,8 +64,8 @@ public function assignDriver(Request $request, $id)
 
 public function changeStatus(Request $request, $id)
 {
-    $booking = Booking::find($id);
-    
+    $booking = Booking::with(['user','location','carmodel.modelName.type.brand','car','driver'])->find($id);
+
     if (!$booking) {
         return response()->json(['message' => 'الحجز غير موجود'], 404);
     }

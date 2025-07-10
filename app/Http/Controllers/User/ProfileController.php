@@ -91,23 +91,16 @@ class ProfileController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        $history = $bookings->map(function ($booking) {
-            return [
-                'booking_id' => $booking->id,
-                'start_date' => $booking->start_date,
-                'end_date' => $booking->end_date,
-                'final_price' => $booking->final_price,
-                'status' => $booking->car_id ? 'confirmed' : 'pending',
-                'model' => new ModelResource($booking->carModel), // fallback model
-                'car' => $booking->car_id
-                    ?$booking->car
-                    : null,
-            ];
-        });
+        if ($bookings->isEmpty()) {
+            return response()->json([
+                'message' => 'لا توجد حجوزات للمستخدم',
+                'data' => []
+            ], 404);
+        }
 
         return response()->json([
             'message' => 'تم استرجاع سجل الحجوزات بنجاح',
-            'data' => $history
+            'data' => $bookings
         ]);
     }    
 }
