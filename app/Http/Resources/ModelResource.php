@@ -14,6 +14,8 @@ class ModelResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $isShowRoute = $request->routeIs('show-details'); // <- Adjust this to your actual show route name
+
         return [
             'id' => (string)$this->id,
             'attributes' =>[
@@ -41,6 +43,21 @@ class ModelResource extends JsonResource
 
                     'brand_name' => $this->modelName->type->brand->name,
                 ],
+                'Ratings' => array_filter([
+                    'average_rating' => $this->avgRating() ? number_format($this->avgRating(), 1) : null,
+                    'ratings_count' => $this->ratings->count(),
+                    // Only include reviews on show route
+                    'reviews' => $isShowRoute ? $this->ratings->map(function ($rating) {
+                        return [
+                            'user_id' => $rating->user->id,
+                            'user_name' => $rating->user->name,
+                            'last_name' => $rating->user->last_name,
+                            'email' => $rating->user->email,
+                            'rating' => (int) $rating->rating,
+                            'review' => $rating->review,
+                        ];
+                    }) : null,
+                ]),
 
             ]
 

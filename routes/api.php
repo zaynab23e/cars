@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\BookingController;
 use App\Http\Controllers\User\UserBookingController;
 use App\Http\Controllers\Admin\CarController;
 use App\Http\Controllers\Sales\SalesBookingController;
+use App\Http\Controllers\User\CarModelRatingController;
 use App\Http\Controllers\User\HomePageController;
 use App\Http\Controllers\User\LocationController;
 use App\Http\Controllers\User\ProfileController;
@@ -86,7 +87,7 @@ Route::prefix('/user')->group(function () {
     Route::post('/reset-password', [UserAuthController::class, 'resetPassword']);
     Route::get('/related', [CarController::class, 'related']);
     Route::post('/Home', [HomePageController::class, 'index']);
-    Route::get('/Model/{id}', [HomePageController::class, 'show']);
+    Route::get('/Model/{id}', [HomePageController::class, 'show'])->name('show-details');
     Route::get('/filter-Info', [HomePageController::class, 'filterInfo']);
 
 });
@@ -107,11 +108,10 @@ Route::middleware('user')->prefix('/user')->group(function () {
     Route::get('/user-profile', [ProfileController::class, 'userProfile']);    
     Route::get('/booking-list', [ProfileController::class, 'bookingList']);
 
-    
-    
-    
-    
-    Route::post('logout', [UserAuthController::class, 'logout']);
+    Route::post('/Model/{modelId}/rate', [CarModelRatingController::class, 'setRate']);
+    Route::delete('/Model/{modelId}/reset-rate', [CarModelRatingController::class, 'resetRate']);
+
+    Route::post('/logout', [UserAuthController::class, 'logout']);
 });
 
 
