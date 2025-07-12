@@ -8,6 +8,8 @@ use App\Models\Car;
 use App\Models\CarModel;
 use App\Models\Image;
 use App\Http\Resources\ModelResource;
+use App\Models\ModelName;
+use App\Models\Type;
 
 class CarController extends Controller
 {

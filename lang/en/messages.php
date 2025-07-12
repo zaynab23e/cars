@@ -109,4 +109,12 @@ return [
     // 'model_update_failed' => 'Model update failed',
     'unauthorized_model_relation' => 'The model does not belong to this name, type, or brand',
 
+
+    // 'booking_not_found'     => 'Booking not found.',
+    'booking_details'       => 'Booking details.',
+    // 'status_updated'        => 'Booking status updated successfully.',
+    // 'driver_assigned'       => 'Status changed to "Assigned".',
+    'invalid_status'        => 'Invalid status.',
+    'cars_by_status'        => 'Cars filtered by status.',
+
 ];

@@ -77,6 +77,7 @@ class ProfileController extends Controller
                 'phone' => $user->phone,
                 'location' => $user->location,
             ]
+            
         ]);
     }
 

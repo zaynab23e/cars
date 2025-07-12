@@ -123,5 +123,10 @@ return [
     // 'model_update_failed' => 'فشل تعديل الموديل',
     'unauthorized_model_relation' => 'الموديل لا ينتمي لهذا الاسم أو النوع أو البراند',
 
-
+//   'booking_not_found'     => 'الحجز غير موجود.',
+    'booking_details'       => 'تفاصيل الحجز.',
+    // 'status_updated'        => 'تم تحديث حالة الحجز بنجاح.',
+    // 'driver_assigned'       => 'تم تعيين الحالة إلى "تم التعيين".',
+    'invalid_status'        => 'الحالة غير صالحة.',
+    'cars_by_status'        => 'العربيات حسب الحالة.',
 ];
