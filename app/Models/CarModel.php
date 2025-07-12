@@ -27,6 +27,14 @@ class CarModel extends Model
     {
         return $this->belongsTo(ModelName::class, 'model_name_id');
     }
+    public function ratings()
+    {
+        return $this->hasMany(CarModelRating::class, 'car_model_id');
+    }
+    public function avgRating()
+    {
+        return $this->ratings()->avg('rating');
+    }
 
     public function cars()
     {
