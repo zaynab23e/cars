@@ -88,14 +88,25 @@ return [
     'login_success' => 'Login successful.',
     // 'logout_success' => 'Logged out successfully.',
     'no_admin_logged_in' => 'No admin logged in.',
-
+    'booking_not_found' => 'Booking not found',
+    'booking_status_not_confirmed' => 'The booking status must be confirmed to assign a car.',
+    'confirmed_bookings_retrieved' => 'Confirmed bookings retrieved successfully.',
+    'completed_bookings_retrieved' => 'Completed bookings retrieved successfully.',
+    'assigned_bookings_retrieved' => 'Assigned bookings retrieved successfully.',
+    'canceled_bookings_retrieved' => 'Canceled bookings retrieved successfully.',
 
         // 'model_not_found' => 'Car model not found.',
+    'car_not_belong_to_model' => 'The car does not belong to this model',
+    'no_cars' => 'No cars found for this model',
+     'car_not_found' => 'Car not found',
+    'cars_retrieved_successfully' => 'Cars retrieved successfully',
+    'car_retrieved_successfully' => 'Car retrieved successfully',
+    'car_not_available' => 'Car not available',
     'car_created' => 'Car created successfully.',
     'car_updated' => 'Car updated successfully.',
     'car_update_failed' => 'Failed to update car.',
     'car_deleted' => 'Car deleted successfully.',
-    'car_wrong_model' => 'The car does not belong to this model.',
+    'car_assigned_successfully' => 'Car assigned successfully.',
 
 
         // 'brand_not_found' => 'Brand not found',
@@ -121,5 +132,11 @@ return [
     'unauthorized' => 'Unauthorized',
     'favorite_added' => 'Car has been added to favorites',
     'favorite_removed' => 'Car has been removed from favorites',
+
+    'setRateSuccess' => 'Rating added successfully',
+    'setRateFailed' => 'Failed to add rating',
+    'deleteRateSuccess' => 'Rating deleted successfully',
+    'ratingNotFound' => 'Rating not found',
+
 
 ];

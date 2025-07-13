@@ -80,11 +80,11 @@ class ProfileController extends Controller
             
         ]);
     }
-    public function bookingList()
+      public function bookingList()
     {
         $user = Auth::guard('user')->user();
 
-        $bookings = Booking::with(['carModel.modelName.type.brand'])
+        $bookings = Booking::with(['car.carModel.modelName','carModel.modelName.type.brand']) // eager load car and its model
             ->where('user_id', $user->id)
             ->orderBy('created_at', 'desc')
             ->get();
@@ -96,24 +96,47 @@ class ProfileController extends Controller
             ], 404);
         }
 
-        $data = $bookings->map(function ($booking) {
-            return [
-                'id' => $booking->id,
-                'start_date' => $booking->start_date,
-                'end_date' => $booking->end_date,
-                'status' => $booking->status,
-                'final_price' => $booking->final_price,
-                'car_model_year' => optional($booking->carModel)->year,
-                'car_model_image' => optional($booking->carModel)->image,
-                'car_model_id' => optional($booking->carModel)->id,
-                'model_name' => optional(optional($booking->carModel)->modelName)->name,
-                'brand_name' => optional(optional(optional($booking->carModel)->modelName)->type->brand)->name,
-            ];
-        });
-
         return response()->json([
             'message' => __('messages.bookings_retrieved'),
-            'data' => $data
+            'data' => $bookings
         ]);
-    }
+    }   
+
+
+    // public function bookingList()
+    // {
+    //     $user = Auth::guard('user')->user();
+
+    //     $bookings = Booking::with(['carModel.modelName.type.brand'])
+    //         ->where('user_id', $user->id)
+    //         ->orderBy('created_at', 'desc')
+    //         ->get();
+
+    //     if ($bookings->isEmpty()) {
+    //         return response()->json([
+    //             'message' => __('messages.no_bookings'),
+    //             'data' => []
+    //         ], 404);
+    //     }
+
+    //     $data = $bookings->map(function ($booking) {
+    //         return [
+    //             'id' => $booking->id,
+    //             'start_date' => $booking->start_date,
+    //             'end_date' => $booking->end_date,
+    //             'status' => $booking->status,
+    //             'final_price' => $booking->final_price,
+    //             'car_model_year' => optional($booking->carModel)->year,
+    //             'car_model_image' => optional($booking->carModel)->image,
+    //             'car_model_id' => optional($booking->carModel)->id,
+    //             'model_name' => optional(optional($booking->carModel)->modelName)->name,
+    //             'brand_name' => optional(optional(optional($booking->carModel)->modelName)->type->brand)->name,
+    //         ];
+    //     });
+
+    //     return response()->json([
+    //         'message' => __('messages.bookings_retrieved'),
+    //         'data' => $data
+    //     ]);
+    // }
 }

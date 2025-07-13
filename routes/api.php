@@ -95,7 +95,6 @@ Route::prefix('/user')->group(function () {
 
 
     
-});
 ///////////////////////////////User Routes////////////////////////////////////
 Route::middleware('user')->prefix('/user')->group(function () {
     Route::post('/user-locations', [LocationController::class, 'setUserLocation']);
@@ -151,3 +150,4 @@ Route::prefix('/sales')->group(function () {
     // Route::get('/bookings/status/{status}', [SalesController::class, 'filterByStatus']);
 });
 //////////////////////////////////////////////////////
+});

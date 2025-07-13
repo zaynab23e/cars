@@ -47,7 +47,7 @@ class SalesBookingController extends Controller
         });
 
         return response()->json([
-            'message' => 'تم استرجاع سجل الحجوزات بنجاح',
+            'message' =>__('messages.confirmed_bookings_retrieved'),
             'data' => $data
         ]);
     }
@@ -63,7 +63,7 @@ class SalesBookingController extends Controller
 
         if ($bookings->isEmpty()) {
             return response()->json([
-                'message' => 'لا توجد حجوزات ',
+                'message' => __('messages.no_bookings'),
                 'data' => []
             ], 404);
         }
@@ -89,7 +89,7 @@ class SalesBookingController extends Controller
         });
 
         return response()->json([
-            'message' => 'تم استرجاع سجل الحجوزات بنجاح',
+            'message' => __('messages.completed_bookings_retrieved'),
             'data' => $data
         ]);
     }
@@ -105,7 +105,7 @@ class SalesBookingController extends Controller
 
         if ($bookings->isEmpty()) {
             return response()->json([
-                'message' => 'لا توجد حجوزات ',
+                'message' => __('messages.no_bookings'),
                 'data' => []
             ], 404);
         }
@@ -131,7 +131,7 @@ class SalesBookingController extends Controller
         });
 
         return response()->json([
-            'message' => 'تم استرجاع سجل الحجوزات بنجاح',
+            'message' => __('messages.assigned_bookings_retrieved'),
             'data' => $data
         ]);
     }
@@ -147,7 +147,7 @@ class SalesBookingController extends Controller
 
         if ($bookings->isEmpty()) {
             return response()->json([
-                'message' => 'لا توجد حجوزات ',
+                'message' => __('messages.no_bookings'),
                 'data' => []
             ], 404);
         }
@@ -173,7 +173,7 @@ class SalesBookingController extends Controller
         });
 
         return response()->json([
-            'message' => 'تم استرجاع سجل الحجوزات بنجاح',
+            'message' => __('messages.assigned_bookings_retrieved'),
             'data' => $data
         ]);
     }
@@ -191,7 +191,7 @@ class SalesBookingController extends Controller
         $cars = $booking->carModel->cars;
         if ($cars->isEmpty()) {
             return response()->json([
-                'message' => 'لا توجد سيارات لهذا الموديل',
+                'message' => __('messages.no_cars'),
                 'data' => []
             ], 404);
         }
@@ -214,33 +214,30 @@ class SalesBookingController extends Controller
             ];
         });
 
-        if ($cars->isEmpty()) {
-            return response()->json([
-                'message' => 'لا توجد سيارات لهذا الموديل',
-                'data' => []
-            ], 404);
-        }
 
         return response()->json([
-            'message' => 'تم استرجاع السيارات بنجاح',
+            'message' => __('messages.cars_retrieved_successfully'),
             'data' => $cars
         ]);
     }
     public function assignCar(string $bookingId, string $carId)
     {
         $booking = Booking::find($bookingId);
+        if (!$booking) {
+            return response()->json(['message' => __('messages.booking_not_found')], 404);
+        }
         $car = Car::find($carId);
         if (!$car || $car->status !== 'available') {
-            return response()->json(['message' => 'السيارة غير متاحة'], 400);
+            return response()->json(['message' => __('messages.car_not_available')], 400);
         }
         if (!$booking) {
-            return response()->json(['message' => 'الحجز غير موجود'], 404);
+            return response()->json(['message' => __('messages.booking_not_found')], 404);
         }
         if (!$car) {
-            return response()->json(['message' => 'السيارة غير موجودة'], 404);
+            return response()->json(['message' => __('messages.car_not_found')], 404);
         }
         if ($booking->status !== 'confirmed') {
-            return response()->json(['message' => 'لا يمكن تعيين السيارة إلا في حالة الحجز المؤكد'], 400);
+            return response()->json(['message' => __('messages.booking_status_not_confirmed')], 400);
         }
         
         $booking->car_id = $car->id;
@@ -248,6 +245,6 @@ class SalesBookingController extends Controller
         $booking->save();
         $car->save();
 
-        return response()->json(['message' => 'تم تعيين السيارة بنجاح', 'data' => $booking], 200);
+        return response()->json(['message' => __('messages.car_assigned_successfully'), 'data' => $booking], 200);
     }
 }

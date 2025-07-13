@@ -24,6 +24,12 @@ return [
     'profile_retrieved' => 'تم استرجاع الملف الشخصي بنجاح',
     'no_bookings' => 'لا توجد حجوزات للمستخدم',
     'bookings_retrieved' => 'تم استرجاع سجل الحجوزات بنجاح',
+    'booking_not_found' => 'الحجز غير موجود',
+    'booking_status_not_confirmed' => 'لا يمكن تعيين السيارة إلا في حالة الحجز المؤكد',
+    'confirmed_bookings_retrieved' => 'تم استرجاع الحجوزات المؤكدة بنجاح',
+    'completed_bookings_retrieved' => 'تم استرجاع الحجوزات المكتملة بنجاح',
+    'assigned_bookings_retrieved' => 'تم استرجاع الحجوزات المعينة بنجاح',
+    'canceled_bookings_retrieved' => 'تم استرجاع الحجوزات الملغاة بنجاح',
 
 
         'register_success' => 'تم إنشاء الحساب بنجاح',
@@ -104,11 +110,17 @@ return [
 
 
         // 'model_not_found' => 'الموديل غير موجود.',
+    'car_not_belong_to_model' => 'السيارة لا تنتمي إلى هذا الموديل',
+    'car_not_found' => 'السيارة غير موجودة',
+    'no_cars' => 'لا توجد سيارات لهذا الموديل',
+    'cars_retrieved_successfully' => 'تم استرجاع السيارات بنجاح',
+    'car_retrieved_successfully' => 'تم استرجاع السيارة بنجاح',
+    'car_not_available' => 'السيارة غير متاحة',
     'car_created' => 'تم إنشاء السيارة بنجاح.',
-    'car_updated' => 'تم تحديث بيانات السيارة بنجاح.',
-    'car_update_failed' => 'فشل في تحديث بيانات السيارة.',
+    'car_updated' => 'تم تحديث السيارة بنجاح.',
+    'car_update_failed' => 'فشل في تحديث السيارة.',
     'car_deleted' => 'تم حذف السيارة بنجاح.',
-    'car_wrong_model' => 'السيارة لا تنتمي إلى هذا الموديل.',
+    'car_assigned_successfully' => 'تم تعيين السيارة بنجاح.',
 
 
 
@@ -133,4 +145,11 @@ return [
     'unauthorized' => 'غير مصرح',
     'favorite_added' => 'تم إضافة السيارة إلى المفضلة',
     'favorite_removed' => 'تم إزالة السيارة من المفضلة',
+
+
+
+    'setRateSuccess' => 'تم إضافة التقييم بنجاح',
+    'setRateFailed' => 'فشل في إضافة التقييم',
+    'deleteRateSuccess' => 'تم حذف التقييم بنجاح',
+    'ratingNotFound' => 'التقييم غير موجود',
 ];

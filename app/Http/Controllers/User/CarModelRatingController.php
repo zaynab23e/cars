@@ -14,7 +14,7 @@ class CarModelRatingController extends Controller
         $user = Auth::guard('user')->user();
 
         if (!$user) {
-            return response()->json(['message' => 'غير مصرح'], 401);
+            return response()->json(['message' => __('messages.unauthorized_user')], 401);
         }
         $request->validate([
             'rating' => 'required|integer|min:1|max:5',
@@ -25,29 +25,30 @@ class CarModelRatingController extends Controller
             ['rating' => $request->input('rating'), 'review' => $request->input('review')]
         );
         if (!$rating) {
-            return response()->json(['message' => 'فشل في إضافة التقييم'], 500);
+            return response()->json(['message' => __('messages.setRateFailed')], 500);
         }
         
-        return response()->json(['message' => 'تم إضافة التقييم بنجاح'], 201);
+        return response()->json(['message' => __('messages.setRateSuccess')], 201);
     }
     public function resetRate(string $modelId)
     {
         $user = Auth::guard('user')->user();
 
         if (!$user) {
-            return response()->json(['message' => 'غير مصرح'], 401);
-        }        
+            return response()->json(['message' => __('messages.unauthorized_user')], 401);
+        }
         $rating = CarModelRating::where('user_id', $user->id)
             ->where('car_model_id', $modelId)
-            ->firstOrFail();
+            ->first();
         if (!$rating) {
-            return response()->json(['message' => 'التقييم غير موجود'], 401);
+            return response()->json(['message' => __('messages.ratingNotFound')], 404);
+
         }
 
         $rating->delete();
 
         return response()->json([
-            'message' => 'تم حذف التقييم بنجاح',
-        ]);        
+            'message' => __('messages.deleteRateSuccess'),
+        ]);
     }
 }
