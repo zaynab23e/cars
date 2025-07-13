@@ -135,5 +135,4 @@ class UserBookingController extends Controller
         return response()->json(['message' => 'تم تحديث بيانات الدفع بنجاح', 'data' => $booking], 200);
 
     }
-    //hrf3ihjr93ujr
 }

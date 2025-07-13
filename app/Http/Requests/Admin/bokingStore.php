@@ -24,8 +24,7 @@ class bokingStore extends FormRequest
         return [
             'driver_id' => 'nullable|exists:drivers,id',
             'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date',
-            'status' => 'nullable|in:pending,confirmed,assigned,canceled,completed',
+            'end_date' => 'required|date|after:start_date',
             'additional_driver' => 'required|boolean',
             'is_active' => 'nullable|boolean',
         ];
