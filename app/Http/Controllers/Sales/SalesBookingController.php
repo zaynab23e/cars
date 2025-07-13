@@ -230,6 +230,9 @@ class SalesBookingController extends Controller
     {
         $booking = Booking::find($bookingId);
         $car = Car::find($carId);
+        if (!$car || $car->status !== 'available') {
+            return response()->json(['message' => 'السيارة غير متاحة'], 400);
+        }
         if (!$booking) {
             return response()->json(['message' => 'الحجز غير موجود'], 404);
         }
@@ -241,8 +244,9 @@ class SalesBookingController extends Controller
         }
         
         $booking->car_id = $car->id;
+        $car->status = 'rented';
         $booking->save();
-        // return response()->json(['message' => 'الحجز غير موجود'], 404);
+        $car->save();
 
         return response()->json(['message' => 'تم تعيين السيارة بنجاح', 'data' => $booking], 200);
     }
