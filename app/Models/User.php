@@ -67,4 +67,20 @@ class User extends Authenticatable
     {
         return $this->hasMany(Booking::class);
     }
+
+    public function favorites()
+{
+    return $this->hasMany(Favorite::class, 'user_id');
+}
+
+public function favoriteCarModels()
+{
+    return $this->belongsToMany(CarModel::class, 'favorites');
+}
+
+public function hasFavorited(CarModel $carModel)
+{
+    return $this->favorites()->where('car_model_id', $carModel->id)->exists();
+}
+
 }

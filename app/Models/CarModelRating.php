@@ -23,4 +23,7 @@ class CarModelRating extends Model
     {
         return $this->belongsTo(CarModel::class, 'car_model_id');
     }
+
+
+
 }

@@ -117,4 +117,9 @@ return [
     'invalid_status'        => 'Invalid status.',
     'cars_by_status'        => 'Cars filtered by status.',
 
+
+    'unauthorized' => 'Unauthorized',
+    'favorite_added' => 'Car has been added to favorites',
+    'favorite_removed' => 'Car has been removed from favorites',
+
 ];

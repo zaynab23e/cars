@@ -80,65 +80,17 @@ class ProfileController extends Controller
             
         ]);
     }
-<<<<<<< HEAD
-
-=======
-// public function bookingList()
-// {
-//     $user = Auth::guard('user')->user();
-
-//     $bookings = Booking::with([
-//         'carModel.modelName.type.brand'
-//     ])
-//     ->where('user_id', $user->id)
-//     ->orderBy('created_at', 'desc')
-//     ->get();
-
-//     if ($bookings->isEmpty()) {
-//         return response()->json([
-//             'message' => 'لا توجد حجوزات للمستخدم',
-//             'data' => []
-//         ], 404);
-//     }
-
-//     // اختيار الحقول المطلوبة فقط
-//     $data = $bookings->map(function ($booking) {
-//         return [
-//             'id' => $booking->id,
-//             'start_date' => $booking->start_date,
-//             'end_date'   => $booking->end_date,
-//             'status'   => $booking->status,
-//             'final_price'   => $booking->final_price,
-//             'car_model_year' => optional($booking->carModel)->year,
-//             'car_model_image' => asset(optional($booking->carModel)->image),
-//             'car_model_id' => optional($booking->carModel)->id,
-//             'model_name'     => optional(optional($booking->carModel)->modelName)->name,
-//             'brand_name'     => optional(optional(optional($booking->carModel)->modelName)->type->brand)->name,
-//         ];
-//     });
-
-//     return response()->json([
-//         'message' => 'تم استرجاع سجل الحجوزات بنجاح',
-//         'data' => $data
-//     ]);
-// }
->>>>>>> 34d68f6924f8220f058393b681677cdc4a66932f
     public function bookingList()
     {
         $user = Auth::guard('user')->user();
 
-<<<<<<< HEAD
         $bookings = Booking::with(['carModel.modelName.type.brand'])
-=======
-        $bookings = Booking::with(['car.carModel.modelName','carModel.modelName.type.brand']) // eager load car and its model
->>>>>>> 34d68f6924f8220f058393b681677cdc4a66932f
             ->where('user_id', $user->id)
             ->orderBy('created_at', 'desc')
             ->get();
 
         if ($bookings->isEmpty()) {
             return response()->json([
-<<<<<<< HEAD
                 'message' => __('messages.no_bookings'),
                 'data' => []
             ], 404);
@@ -164,17 +116,4 @@ class ProfileController extends Controller
             'data' => $data
         ]);
     }
-=======
-                'message' => 'لا توجد حجوزات للمستخدم',
-                'data' => []
-            ], 404);
-        }
-
-        return response()->json([
-            'message' => 'تم استرجاع سجل الحجوزات بنجاح',
-            'data' => $bookings
-        ]);
-    }   
-  
->>>>>>> 34d68f6924f8220f058393b681677cdc4a66932f
 }

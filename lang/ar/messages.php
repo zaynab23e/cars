@@ -129,4 +129,8 @@ return [
     // 'driver_assigned'       => 'تم تعيين الحالة إلى "تم التعيين".',
     'invalid_status'        => 'الحالة غير صالحة.',
     'cars_by_status'        => 'العربيات حسب الحالة.',
+
+    'unauthorized' => 'غير مصرح',
+    'favorite_added' => 'تم إضافة السيارة إلى المفضلة',
+    'favorite_removed' => 'تم إزالة السيارة من المفضلة',
 ];

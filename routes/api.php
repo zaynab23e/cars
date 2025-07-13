@@ -18,6 +18,7 @@ use App\Http\Controllers\User\HomePageController;
 use App\Http\Controllers\User\LocationController;
 use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\Sales\SalesController;
+use App\Http\Controllers\User\FavoriteController;
 
 Route::middleware('lang')->group(function () {
 ///////////////////////////////Admin Routes////////////////////////////////////
@@ -110,6 +111,9 @@ Route::middleware('user')->prefix('/user')->group(function () {
 
     Route::post('/Model/{modelId}/rate', [CarModelRatingController::class, 'setRate']);
     Route::delete('/Model/{modelId}/reset-rate', [CarModelRatingController::class, 'resetRate']);
+
+    Route::post('favorites/toggle/{carModel}', [FavoriteController::class, 'toggleFavorite']);
+    Route::get('favorites', [FavoriteController::class, 'getFavorites']);
 
     Route::post('/logout', [UserAuthController::class, 'logout']);
 });

@@ -41,5 +41,15 @@ class CarModel extends Model
         return $this->hasMany(Car::class, 'carmodel_id');
     }
 
-  
+    
+    public function favoritedBy()
+{
+    return $this->belongsToMany(User::class, 'favorites');
+}
+public function type()
+{
+    return $this->belongsTo(BrandType::class, 'type_id'); 
+}
+
+
 }
