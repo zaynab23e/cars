@@ -57,11 +57,11 @@ Route::middleware('admin')->prefix('/admin')->group(function () {
     Route::post('/Models/{id}/image', [ModelController::class, 'updateImage']);
 
     //cars
-    Route::get('/Model-Names/{modelNameId}/Models/{modelId}/Cars', [CarController::class, 'index']);
-    Route::post('/Model-Names/{modelNameId}/Models/{modelId}/Cars', [CarController::class, 'store']);
-    Route::get('/Model-Names/{modelNameId}/Models/{modelId}/Cars/{car}', [CarController::class, 'show']);
-    Route::post('/Model-Names/{modelNameId}/Models/{modelId}/Cars/{car}', [CarController::class, 'update']); 
-    Route::delete('/Model-Names/{modelNameId}/Models/{modelId}/Cars/{car}', [CarController::class, 'destroy']);
+    Route::get('/Brands/{brandId}/Types/{typeId}/Model-Names/{modelNameId}/Models/{modelId}/Cars', [CarController::class, 'index']);
+    Route::post('/Brands/{brandId}/Types/{typeId}/Model-Names/{modelNameId}/Models/{modelId}/Cars', [CarController::class, 'store']);
+    Route::get('/Brands/{brandId}/Types/{typeId}/Model-Names/{modelNameId}/Models/{modelId}/Cars/{car}', [CarController::class, 'show']);
+    Route::post('/Brands/{brandId}/Types/{typeId}/Model-Names/{modelNameId}/Models/{modelId}/Cars/{car}', [CarController::class, 'update']); 
+    Route::delete('/Brands/{brandId}/Types/{typeId}/Model-Names/{modelNameId}/Models/{modelId}/Cars/{car}', [CarController::class, 'destroy']);
     
     //Booking
     Route::get('/Booking', [BookingController::class, 'index']); 

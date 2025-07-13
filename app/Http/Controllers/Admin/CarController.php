@@ -14,14 +14,18 @@ use App\Models\Type;
 class CarController extends Controller
 {
     //_______________________________________________________________________________________________
-    public function index($brandId, $typeId, $modelId)
+    public function index(string $brandId, string $typeId, string $modelNameId, string $modelId)
     {
-        $cars = Car::where('carmodel_id', $modelId)->get();
+        $cars = Car::where('carmodel_id', $modelId)
+        ->whereHas('carModel.modelName', function ($query) use ($modelNameId) {
+            $query->where('id', $modelNameId);
+        })
+        ->get();
         return response()->json($cars);
     }
 
     //_____________________________________________________________________________________________
-public function store(Request $request,string $modelNameId , $modelId)
+public function store(Request $request,string $brandId, string $typeId,string $modelNameId , string $modelId)
 {
     $model = CarModel::with('modelName.type.brand')
         ->where('id', $modelId)
@@ -76,19 +80,23 @@ public function store(Request $request,string $modelNameId , $modelId)
     }
 
     return response()->json([
-        'message' => 'تم إضافة السيارة والصور بنجاح',
-        'data' => $car->load('images'), 
+        'message' => 'تم إضافة السيارة بنجاح',
+        'data' => $car->load('images'),
     ], 201);
 }
 
     // _________________________________________________________________________________________
 
-public function show($id)
+public function show(string $brandId, string $typeId, string $modelNameId, string $modelId, string $id)
 {
-    $car = Car::with(['images', 'carModel.type.brand'])->findOrFail($id);
+    $car = Car::with(['images', 'carModel.modelName.type.brand'])->find($id);
+    if (!$car) {
+        return response()->json(['message' => 'لا توجد سيارة'], 404);
+    }
 
     return response()->json([
-        'message' => [
+        'message' => 'تم استرجاع السيارة بنجاح',
+        'data' => [
             'id' => $car->id,
             'plate_number' => $car->plate_number,
             'status' => $car->status,
@@ -96,7 +104,6 @@ public function show($id)
             'main_image' => $car->image ? asset('storage/' . $car->image) : null,
             'images' => $car->images->map(fn($img) => asset('storage/' . $img->path)),
             'car_model' => $car->carModel ? new ModelResource($car->carModel) : null,
-            'created_at' => $car->created_at,
         ]
     ]);
 }
@@ -107,8 +114,15 @@ public function related()
     return response()->json($cars);
 }
 // __________________________________________________________________________________________
-public function update(Request $request, $brandId, $typeId, $modelId, Car $car)
+public function update(Request $request, string $brandId, string $typeId, string $modelNameId, string $modelId, string $id)
 {
+    $car = Car::with(['images', 'carModel.modelName.type.brand'])->find($id);
+    if (!$car) {
+        return response()->json(['message' => 'لا توجد سيارة'], 404);
+    }    
+    if (!$car) {
+        return response()->json(['message' => 'لا توجد سيارة'], 404);
+    }    
     if ($car->carmodel_id != $modelId) {
         return response()->json(['message' => 'السيارة لا تنتمي لهذا الموديل'], 404);
     }
@@ -161,19 +175,23 @@ public function update(Request $request, $brandId, $typeId, $modelId, Car $car)
 }
 
     //____________________________________________________________________________________________
-    public function destroy($brandId, $typeId, $modelId, Car $car)
+    public function destroy(string $brandId, string $typeId, string $modelNameId, string $modelId, string $id)
     {
+        $car = Car::find($id);
+        if (!$car) {
+            return response()->json(['message' => 'لا توجد سيارة'], 404);
+        }         
         if ($car->carmodel_id != $modelId) {
-            return response()->json(['message' => 'Car does not belong to this model'], 404);
+            return response()->json(['message' => 'السيارة لا تنتمي لهذا الموديل'], 404);
         }
 
         $car->delete();
         $model = CarModel::where('id', $modelId)
-                ->where('type_id', $typeId)
-                ->firstOrFail();        
+                ->where('model_name_id', $modelNameId)
+                ->first();        
         $carsCount = Car::where('carmodel_id',$modelId)->count();
         $model->count = $carsCount ;
         $model->save();         
-        return response()->json(['message' => 'Car deleted successfully']);
+        return response()->json(['message' => 'تم حذف السيارة بنجاح']);
     }
 }
