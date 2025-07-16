@@ -4,8 +4,8 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Http\Requests\user\Store;
-use App\Http\Requests\user\Login;
+use App\Http\Requests\User\store;
+use App\Http\Requests\User\login;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -47,8 +47,9 @@ class UserAuthController extends Controller
 
     public function logout(Request $request)
     {
-        if (Auth::check()) {
-            $request->user()->tokens()->delete();
+        $user = Auth::guard('user')->user(); // Use the user guard
+        if ($user) {
+            $user->tokens()->delete();
             return response()->json(['message' => __('messages.logout_success')]);
         }
 

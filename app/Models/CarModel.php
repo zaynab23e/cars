@@ -27,6 +27,10 @@ class CarModel extends Model
     {
         return $this->belongsTo(ModelName::class, 'model_name_id');
     }
+    public function images()
+    {
+        return $this->hasMany(CarModelImage::class);
+    }
     public function ratings()
     {
         return $this->hasMany(CarModelRating::class, 'car_model_id');
@@ -43,13 +47,13 @@ class CarModel extends Model
 
     
     public function favoritedBy()
-{
-    return $this->belongsToMany(User::class, 'favorites');
-}
-public function type()
-{
-    return $this->belongsTo(BrandType::class, 'type_id'); 
-}
+    {
+        return $this->belongsToMany(User::class, 'favorites');
+    }
+    public function type()
+    {
+        return $this->belongsTo(BrandType::class, 'type_id'); 
+    }
 
 
 }

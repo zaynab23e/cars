@@ -55,7 +55,7 @@ Route::middleware('admin')->prefix('/admin')->group(function () {
     Route::post('/Brands/{brandId}/Types/{typeId}/Model-Names/{modelNameId}/Models', [ModelController::class, 'store']);
     Route::post('/Brands/{brandId}/Types/{typeId}/Model-Names/{modelNameId}/Models/{id}', [ModelController::class, 'update']);
     Route::delete('/Brands/{brandId}/Types/{typeId}/Model-Names/{modelNameId}/Models/{id}', [ModelController::class, 'destroy']);
-    Route::get('/Brands/{brandId}/Types/{typeId}/Model-Names/{modelNameId}/Models/{id}', [ModelController::class, 'show']);
+    Route::get('/Brands/{brandId}/Types/{typeId}/Model-Names/{modelNameId}/Models/{id}', [ModelController::class, 'show'])->name('show-model');
     Route::post('/Models/{id}/image', [ModelController::class, 'updateImage']);
 
     //cars

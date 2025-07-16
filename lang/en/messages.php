@@ -108,6 +108,7 @@ return [
     'car_deleted' => 'Car deleted successfully.',
     'car_assigned_successfully' => 'Car assigned successfully.',
 
+    'car_not_assigned' => 'Car not assigned',
 
         // 'brand_not_found' => 'Brand not found',
     // 'type_not_found_in_brand' => 'Type not found in this brand',

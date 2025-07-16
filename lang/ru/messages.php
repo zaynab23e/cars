@@ -112,6 +112,7 @@ return [
     'car_update_failed' => 'Не удалось обновить автомобиль.',
     'car_deleted' => 'Автомобиль успешно удалён.',
     'car_assigned_successfully' => 'Автомобиль успешно назначен.',
+    'car_not_assigned' => 'Автомобиль не назначен',
 
     //    'brand_not_found' => 'Бренд не найден',
     // 'type_not_found_in_brand' => 'Тип не найден в этом бренде',

@@ -121,6 +121,7 @@ return [
     'car_update_failed' => 'فشل في تحديث السيارة.',
     'car_deleted' => 'تم حذف السيارة بنجاح.',
     'car_assigned_successfully' => 'تم تعيين السيارة بنجاح.',
+    'car_not_assigned' => 'السيارة غير معينة.',
 
 
 

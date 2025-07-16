@@ -36,12 +36,15 @@ class ModelController extends Controller
 
     public function store(string $brandId, string $typeId, string $modelNameId, Request $request)
     {
+
         $filename = null;
+                $filesnames = null;
 
         $request->validate([
             'year' => 'required|integer',
             'price' => 'required|numeric',
             'image' => 'required|image|max:2048',
+            'images.*' => 'image|max:2048',
             'engine_type' => 'required|in:Gasoline,Electric,Hybrid,Plug-in Hybrid',
             'transmission_type' => 'required|in:Manual,Automatic,Hydramatic,CVT,DCT',
             'seat_type' => 'required|in:electric,sport,accessible,leather,fabric',
@@ -68,6 +71,7 @@ class ModelController extends Controller
             $file->move(public_path('models'), $filename);
         }
 
+
         $model = CarModel::create([
             'year' => $request->year,
             'price' => $request->price,
@@ -79,6 +83,18 @@ class ModelController extends Controller
             'seats_count' => $request->seats_count,
             'acceleration' => $request->acceleration,
         ]);
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $index => $image) {
+                $filename = time() . '_' . $index . '.' . $image->getClientOriginalExtension();
+                $image->move(public_path('models'), $filename);
+
+                $model->images()->create([
+                    'image' =>$filename? 'models/' . $filename:null,
+                ]);
+            }
+        }
+
+        $model->load('images');        
 
         return response()->json([
             'message' => __('messages.model_created_successfully'),
@@ -110,7 +126,8 @@ class ModelController extends Controller
 
         return response()->json([
             'message' => __('messages.image_updated_successfully'),
-            'data' => $model
+            'data' => $model,
+            'images' => $model->images,
         ]);
     }
 
@@ -151,6 +168,17 @@ class ModelController extends Controller
             $file->move(public_path('models'), $filename);
             $model->image = 'models/' . $filename;
         }
+        if ($request->hasFile('images')) {
+            $model->images()->delete(); // Clear existing images
+            foreach ($request->file('images') as $index => $image) {
+                $filename = time() . '_' . $index . '.' . $image->getClientOriginalExtension();
+                $image->move(public_path('models'), $filename);
+
+                $model->images()->create([
+                    'image' =>$filename? 'models/' . $filename : null,
+                ]);
+            }
+        }
 
         $model->year = $request->year;
         $model->price = $request->price;
@@ -176,7 +204,7 @@ class ModelController extends Controller
 
     public function show(string $brandId, string $typeId, string $modelNameId, $id)
     {
-        $type = Type::where('id', $typeId)->get();
+        $type = Type::with('modelNames')->where('id', $typeId)->first();
 
         if (!$type) {
             return response()->json(['message' => __('messages.type_not_found_in_brand')], 404);

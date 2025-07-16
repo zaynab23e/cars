@@ -328,6 +328,12 @@ class BookingController extends Controller
         if (!$booking) {
         return response()->json(['message' => __('messages.booking_not_found')], 404);
         }
+        if ($booking->status !== 'confirmed') {
+            return response()->json(['message' => __('messages.booking_status_not_confirmed')], 400);
+        }
+        if (!$booking->car) {
+            return response()->json(['message' => __('messages.car_not_assigned')], 400);
+        }
         
         // $request->validate([
         //     'driver_id' => 'required|exists:drivers,id',

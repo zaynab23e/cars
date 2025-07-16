@@ -14,7 +14,8 @@ class ModelResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $isShowRoute = $request->routeIs('show-details'); // <- Adjust this to your actual show route name
+        $isShowDetailsRoute = $request->routeIs('show-details'); // <- Adjust this to your actual show route name
+        $isShowRoute = $request->routeIs('show-model'); // <- Adjust this to your actual show route name
 
         return [
             'id' => (string)$this->id,
@@ -29,11 +30,16 @@ class ModelResource extends JsonResource
                 'image' =>$this->image ? asset($this->image) : null
 
             ],
-            'relationship' => [
+            'relationship' => array_filter([
                 'Model Names' => [
                     'model_name_id' => (string)$this->modelName->id,
                     'model_name' => $this->modelName->name,
                 ],
+                'Images' =>$isShowDetailsRoute || $isShowRoute ? $this->images->map(function ($image) {
+
+                        return asset($image->image) ? asset($image->image) : null;
+
+                }) : null,
                 'Types' => [
                     'type_id' => (string)$this->modelName->type->id,
                     'type_name' => $this->modelName->type->name,
@@ -47,7 +53,7 @@ class ModelResource extends JsonResource
                     'average_rating' => $this->avgRating() ? number_format($this->avgRating(), 1) : null,
                     'ratings_count' => $this->ratings->count(),
                     // Only include reviews on show route
-                    'reviews' => $isShowRoute ? $this->ratings->map(function ($rating) {
+                    'reviews' => $isShowDetailsRoute ? $this->ratings->map(function ($rating) {
                         return [
                             'user_id' => $rating->user->id,
                             'user_name' => $rating->user->name,
@@ -59,7 +65,8 @@ class ModelResource extends JsonResource
                     }) : null,
                 ]),
 
-            ]
+            ]),
+
 
         ];
     
