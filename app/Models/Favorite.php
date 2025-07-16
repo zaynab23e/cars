@@ -5,7 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Favorite extends Model
 {
-    protected $hidden = ['created_at', 'updated_at','car_model_id'];
+    protected $hidden = ['created_at', 'updated_at'];
     protected $fillable = ['user_id', 'car_model_id'];
 
     public function user()

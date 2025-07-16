@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ModelResource;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Favorite;
 use App\Models\CarModel;
@@ -40,7 +41,14 @@ class FavoriteController extends Controller
         }
 
         $favorites = $user->favorites()->with('carModel.modelName.type.brand')->get(); 
-        // return response()->json($favorites);
-        return response()->json($favorites);
+        $formatted = $favorites->map(function ($favorite) {
+            return [
+                'fav_id' => $favorite->id,
+                'user_id' => $favorite->user_id,
+                'car_model' => new ModelResource($favorite->carModel),
+            ];
+        });
+
+    return response()->json($formatted);        
     }
 }
