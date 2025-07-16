@@ -66,19 +66,22 @@ Route::middleware('admin')->prefix('/admin')->group(function () {
     Route::delete('/Brands/{brandId}/Types/{typeId}/Model-Names/{modelNameId}/Models/{modelId}/Cars/{car}', [CarController::class, 'destroy']);
     
     //Booking
-    Route::get('/Booking', [BookingController::class, 'index']); 
-    Route::post('/Booking', [BookingController::class, 'store']); 
-    Route::get('/Booking/{id}', [BookingController::class, 'show']); 
-    Route::post('/Booking/{id}', [BookingController::class, 'update']); 
-    Route::delete('/Booking/{id}', [BookingController::class, 'destroy']); 
-
-
-    //    Route::get('/Brands/{brandId}/Types/{typeId}/Models/{modelId}/Car', [ModelController::class, 'index']);
     
+    Route::get('/Confirmed-Booking', [BookingController::class, 'ConfirmedBooking']);
+    Route::get('/Assigned-Booking', [BookingController::class, 'AssignedBooking']);
+    Route::get('/Completed-Booking', [BookingController::class, 'CompletedBooking']);
+    Route::get('/Canceled-Booking', [BookingController::class, 'CanceledBooking']);
+    Route::get('/Booking/{id}', [BookingController::class, 'bookingDetails']);
+    Route::delete('/Booking/{id}', [BookingController::class, 'destroy']);
+    
+
+    Route::get('/Booking/{id}/Cars', [BookingController::class, 'getCars']);
+    Route::post('/Booking/{id}/assign', [BookingController::class, 'markAsAssigned']);
+    Route::post('/Booking/{bookingId}/Assign-Car/', [BookingController::class, 'assignCar']);
+    Route::post('/booking/{id}/status', [BookingController::class, 'changeStatus']);
+
 });
-// user routes
-
-
+///////////////////////////////User Routes////////////////////////////////////
 Route::prefix('/user')->group(function () {
 
     Route::post('/register', [UserAuthController::class, 'register']);
@@ -95,7 +98,7 @@ Route::prefix('/user')->group(function () {
 
 
     
-///////////////////////////////User Routes////////////////////////////////////
+///////////////////////////////User-Middleware Routes////////////////////////////////////
 Route::middleware('user')->prefix('/user')->group(function () {
     Route::post('/user-locations', [LocationController::class, 'setUserLocation']);
     Route::post('/user-locations/{id}', [LocationController::class, 'updateUserLocation']);
@@ -117,37 +120,4 @@ Route::middleware('user')->prefix('/user')->group(function () {
     Route::post('/logout', [UserAuthController::class, 'logout']);
 });
 
-
-
-/////////////////////////Sales/////////////////////////
-
-
-Route::prefix('/sales')->group(function () {
-    Route::get('/Confirmed-Booking', [SalesBookingController::class, 'ConfirmedBooking']);
-
-    Route::get('/Completed-Booking', [SalesBookingController::class, 'CompletedBooking']);
-
-    Route::get('/Assigned-Booking', [SalesBookingController::class, 'AssignedBooking']);
-
-    Route::get('/Canceled-Booking', [SalesBookingController::class, 'CanceledBooking']);
-
-    Route::get('/Booking/{id}/Cars', [SalesBookingController::class, 'getCars']);
-    Route::post('/Booking/{bookingId}/Assign-Car/{carId}', [SalesBookingController::class, 'assignCar']);
-
-    // Route::get('/Booking/{id}', [SalesBookingController::class, 'show']);
-    Route::delete('/Booking/{id}', [SalesBookingController::class, 'destroy']);
-
-
-      Route::get('/booking/{id}', [SalesController::class, 'bookingDetails']);
-    Route::get('/bookings/show/{id}', [SalesController::class, 'show']);
-
-    Route::post('/booking/{id}/assign', [SalesController::class, 'markAsAssigned']);
-    Route::post('/booking/{id}/status', [SalesController::class, 'changeStatus']);
-
-    Route::get('/cars/status/{status}', [SalesController::class, 'carsByStatus']);
-
-    // Route::get('/my-bookings', [SalesController::class, 'myBookings']);
-    // Route::get('/bookings/status/{status}', [SalesController::class, 'filterByStatus']);
-});
-//////////////////////////////////////////////////////
 });

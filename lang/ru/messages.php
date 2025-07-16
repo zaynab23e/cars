@@ -115,6 +115,7 @@ return [
 
     //    'brand_not_found' => 'Бренд не найден',
     // 'type_not_found_in_brand' => 'Тип не найден в этом бренде',
+    'car_model_mismatch' => 'Автомобиль не соответствует модели',
     'model_name_not_found_in_type' => 'Название модели не найдено в этом типе',
     // 'model_not_found' => 'Модель не найдена',
     // 'model_created_successfully' => 'Модель успешно добавлена',

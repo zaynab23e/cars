@@ -111,6 +111,7 @@ return [
 
         // 'brand_not_found' => 'Brand not found',
     // 'type_not_found_in_brand' => 'Type not found in this brand',
+    'car_model_mismatch' => 'The car does not match the selected model',
     'model_name_not_found_in_type' => 'Model name not found in this type',
     // 'model_not_found' => 'Model not found',
     // 'model_created_successfully' => 'Model created successfully',

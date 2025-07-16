@@ -126,6 +126,7 @@ return [
 
         // 'brand_not_found' => 'البراند غير موجود',
     // 'type_not_found_in_brand' => 'النوع غير موجود في هذا البراند',
+    'car_model_mismatch' => 'السيارة لا تتطابق مع الموديل المحدد',
     'model_name_not_found_in_type' => 'اسم الموديل غير موجود في هذا النوع',
     // 'model_not_found' => 'الموديل غير موجود',
     // 'model_created_successfully' => 'تم إضافة الموديل بنجاح',
