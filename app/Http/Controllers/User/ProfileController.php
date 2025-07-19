@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\BookingResource;
 use App\Http\Resources\ModelResource;
 use App\Models\Booking;
 use Illuminate\Http\Request;
@@ -98,7 +99,7 @@ class ProfileController extends Controller
 
         return response()->json([
             'message' => __('messages.bookings_retrieved'),
-            'data' => $bookings
+            'data' =>  BookingResource::collection($bookings),
         ]);
     }   
 

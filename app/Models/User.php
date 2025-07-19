@@ -40,6 +40,7 @@ class User extends Authenticatable
         'updated_at',
         'email_verified_at',
         'location',
+        'verification_code',
         'latitude',
         'longitude',
         'password',
@@ -57,6 +58,11 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+    public function generateVerificationCode()
+    {
+        $this->verification_code = rand(100000, 999999); // 6-digit code
+        $this->save();
     }
     public function userLocations()
     {

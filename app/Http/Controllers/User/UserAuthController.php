@@ -131,4 +131,39 @@ class UserAuthController extends Controller
 
         return response()->json(['message' => __('messages.password_reset_success')]);
     }
+    public function sendVerificationCode(Request $request)
+    {
+        $request->validate(['email' => 'required|email|exists:users,email']);
+
+        $user = User::where('email', $request->email)->first();
+        $user->generateVerificationCode();
+
+        // Send Email with the Verification Code
+        $user->notify(new \App\Notifications\VerifyEmail($user->verification_code));
+
+
+        return response()->json(['message' => 'Verification code sent successfully']);
+    }
+    public function verifyEmailCode(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'verification_code' => 'required|string',
+        ]);
+
+        $user = User::where('email', $request->email)
+                    ->where('verification_code', $request->verification_code)
+                    ->first();
+    
+        if (!$user) {
+            return response()->json(['message' => 'Invalid verification code'], 400);
+        }
+    
+        // Mark the email as verified
+        $user->email_verified_at = now();
+        $user->verification_code = null; // Clear the code
+        $user->save();
+    
+        return response()->json(['message' => 'Email verified successfully']);
+    }    
 }

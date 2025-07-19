@@ -34,7 +34,7 @@ class UserBookingController extends Controller
                 'location_id' => 'required|exists:user_locations,id',
             ]);
 
-            $location = $user->userLocations()->find($validated['location_id']);
+            $location = $user->userLocations()->find($request->location_id);
             if (!$location) {
                 return response()->json(['message' => __('messages.location_not_found')], 404);
             }

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Booking;
 use App\Http\Requests\Admin\bokingStore;
 use App\Http\Requests\Admin\bokingupdate;
+use App\Http\Resources\BookingResource;
 use App\Models\Car;
 
 //________________________________________________________________________________________________________
@@ -104,13 +105,13 @@ class BookingController extends Controller
             'data' => $data
         ]);
     }
-    public function AssignedBooking()
+    public function DriverAssignedBooking()
     {
 
         $bookings = Booking::with([
-            'carModel.modelName.type.brand','user','location'
+            'carModel.modelName.type.brand','user','location','driver','location'
         ])
-        ->where('status', 'assigned')
+        ->where('status', 'driver_assigned')
         ->orderBy('created_at', 'desc')
         ->get();
 
@@ -141,7 +142,11 @@ class BookingController extends Controller
                 'brand_name'     => optional(optional(optional($booking->carModel)->modelName)->type->brand)->name,
                 'user_name' => optional($booking->user)->name,
                 'user_email' => optional($booking->user)->email,
-                'location' => optional($booking->location)->name,
+                'user_phone' => optional($booking->user)->phone,
+                'driver_name' => optional($booking->driver)->name,
+                'driver_email' => optional($booking->driver)->email,
+                'driver_phone' => optional($booking->driver)->phone,
+                'location' => optional($booking->location)->location,
             ];
         });
 
@@ -206,27 +211,7 @@ class BookingController extends Controller
 
         return response()->json([
             'message' => __('messages.booking_details'),
-            'data' => 
-             [
-                'id' => $booking->id,
-                'start_date' => $booking->start_date,
-                'end_date'   => $booking->end_date,
-                'status'   => $booking->status,
-                'payment_method'   => $booking->payment_method,
-                'final_price'   => $booking->final_price,
-                'car_model_id' => optional($booking->carModel)->id,
-                'model_name'     => optional(optional($booking->carModel)->modelName)->name,
-                'car_model_year' => optional($booking->carModel)->year,
-                'car_model_image' => asset(optional($booking->carModel)->image),
-                'Ratings' => [
-                    'average_rating' => $booking->carModel->avgRating() ? number_format($booking->carModel->avgRating(), 1) : null,
-                    'ratings_count' => $booking->carModel->ratings->count(),
-                ],                
-                'brand_name'     => optional(optional(optional($booking->carModel)->modelName)->type->brand)->name,
-                'user_name' => optional($booking->user)->name,
-                'user_email' => optional($booking->user)->email,
-                'location' => optional($booking->location)->name,
-            ]    
+           'data'=> new BookingResource($booking),
     ], 200);
     }    
 
@@ -314,37 +299,13 @@ class BookingController extends Controller
 
         
         $booking->car_id = $car->id;
+        $booking->status = 'car_assigned';
         $car->status = 'rented';
         $booking->save();
         $car->save();
 
         return response()->json(['message' => __('messages.car_assigned_successfully'), 'data' => $booking], 200);
     }    
-    //______________________________________________________________________________________________________
-    public function markAsAssigned(Request $request, $id)
-    {
-        $booking = Booking::with(['user','location','carmodel.modelName.type.brand','car','driver'])->find($id);
-
-        if (!$booking) {
-        return response()->json(['message' => __('messages.booking_not_found')], 404);
-        }
-        if ($booking->status !== 'confirmed') {
-            return response()->json(['message' => __('messages.booking_status_not_confirmed')], 400);
-        }
-        if (!$booking->car) {
-            return response()->json(['message' => __('messages.car_not_assigned')], 400);
-        }
-        
-        // $request->validate([
-        //     'driver_id' => 'required|exists:drivers,id',
-        // ]);
-        
-        // $booking->driver_id = $request->driver_id;
-        $booking->status = 'assigned';
-        $booking->save();
-        
-        return response()->json(['message' => __('messages.driver_assigned'), 'data' => $booking], 200);
-    }
     //________________________________________________________________________________________________________
 
     public function changeStatus(Request $request, $id)

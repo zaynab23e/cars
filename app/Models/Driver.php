@@ -47,4 +47,12 @@ class Driver extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    public function driverLocations()
+    {
+        return $this->hasMany(DriverLocation::class);
+    }    
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }    
 }

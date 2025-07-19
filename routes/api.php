@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminBrandsController;
+use App\Http\Controllers\Admin\AdminDriversController;
 use App\Http\Controllers\Admin\AdminModelNameController;
 use App\Http\Controllers\Admin\AdminsAuthController;
 use App\Http\Controllers\Admin\AdminTypesController;
@@ -12,6 +13,8 @@ use App\Http\Controllers\Admin\ModelController;
 use App\Http\Controllers\Admin\BookingController;
 use App\Http\Controllers\User\UserBookingController;
 use App\Http\Controllers\Admin\CarController;
+use App\Http\Controllers\Driver\DriverAuthController;
+use App\Http\Controllers\Driver\DriverBookingController;
 use App\Http\Controllers\Sales\SalesBookingController;
 use App\Http\Controllers\User\CarModelRatingController;
 use App\Http\Controllers\User\HomePageController;
@@ -19,6 +22,7 @@ use App\Http\Controllers\User\LocationController;
 use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\Sales\SalesController;
 use App\Http\Controllers\User\FavoriteController;
+use App\Http\Middleware\Driver;
 
 Route::middleware('lang')->group(function () {
 ///////////////////////////////Admin Routes////////////////////////////////////
@@ -68,15 +72,16 @@ Route::middleware('admin')->prefix('/admin')->group(function () {
     //Booking
     
     Route::get('/Confirmed-Booking', [BookingController::class, 'ConfirmedBooking']);
-    Route::get('/Assigned-Booking', [BookingController::class, 'AssignedBooking']);
+    Route::get('/Driver-Assigned-Booking', [BookingController::class, 'DriverAssignedBooking']);
     Route::get('/Completed-Booking', [BookingController::class, 'CompletedBooking']);
     Route::get('/Canceled-Booking', [BookingController::class, 'CanceledBooking']);
     Route::get('/Booking/{id}', [BookingController::class, 'bookingDetails']);
     Route::delete('/Booking/{id}', [BookingController::class, 'destroy']);
     
+    Route::get('/Drivers', [AdminDriversController::class, 'getDrivers']);
+    Route::post('/Booking/{id}/assign-driver', [AdminDriversController::class, 'assignDriver']);
 
     Route::get('/Booking/{id}/Cars', [BookingController::class, 'getCars']);
-    Route::post('/Booking/{id}/assign', [BookingController::class, 'markAsAssigned']);
     Route::post('/Booking/{bookingId}/Assign-Car/', [BookingController::class, 'assignCar']);
     Route::post('/booking/{id}/status', [BookingController::class, 'changeStatus']);
 
@@ -120,4 +125,26 @@ Route::middleware('user')->prefix('/user')->group(function () {
     Route::post('/logout', [UserAuthController::class, 'logout']);
 });
 
+
+Route::prefix('/driver')->group(function () {
+
+    Route::post('/register', [DriverAuthController::class, 'register']);
+    Route::post('/login', [DriverAuthController::class, 'login']);
+    Route::post('/forgot-password', [DriverAuthController::class, 'forgotPassword']);
+    Route::post('/verify-code', [DriverAuthController::class, 'verifyCode']);
+    Route::post('/reset-password', [DriverAuthController::class, 'resetPassword']);
+
+});
+Route::middleware('driver')->prefix('/driver')->group(function () {
+    Route::get('/Completed-Booking', [DriverBookingController::class, 'CompletedBooking']);
+    Route::get('/Assigned-Booking', [DriverBookingController::class, 'AssignedBooking']);
+    Route::get('/Accepted-Booking', [DriverBookingController::class, 'AcceptedBooking']);
+
+    Route::post('/booking/{id}/status', [DriverBookingController::class, 'changeStatus']); 
+
+    Route::post('/update-Location', [DriverBookingController::class, 'updateLocation']);
+    Route::post('/getBestRoute', [DriverBookingController::class, 'getBestRoute']);
+    
+    Route::post('/logout', [DriverAuthController::class, 'logout']);
+});
 });
